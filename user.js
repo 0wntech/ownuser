@@ -1,5 +1,5 @@
-import rdf from "rdflib";
-import ns from "solid-namespace";
+const rdf = require("rdflib");
+const ns = require("solid-namespace")(rdf);
 
 function User(webId) {
   this.webId = webId;
@@ -9,39 +9,37 @@ function User(webId) {
     const fetcher = new rdf.Fetcher(store);
 
     return fetcher.load(this.webId).then(() => {
-      const name = store.any(rdf.sym(webId), FOAF("name"));
+      const name = store.any(rdf.sym(webId), ns.foaf("name"));
       const nameValue = name ? name.value : undefined;
 
       const emails = store
-        .each(rdf.sym(webId), VCARD("hasEmail"))
+        .each(rdf.sym(webId), ns.vcard("hasEmail"))
         .map(emailBlankId => {
-          return emails.push([
-            emailAddress.value,
-            (store.any(rdf.sym(emailBlankId), VCARD("value"))).value
-          ]);
+          return [
+            store.any(rdf.sym(emailBlankId), ns.vcard("value")).value,
+            emailBlankId.value
+          ];
         });
 
-      const picture = store.any(rdf.sym(webId), VCARD("hasPhoto"));
+      const picture = store.any(rdf.sym(webId), ns.vcard("hasPhoto"));
       const pictureValue = picture ? picture.value : "";
 
-      const job = store.any(rdf.sym(webId), VCARD("role"));
+      const job = store.any(rdf.sym(webId), ns.vcard("role"));
       const jobValue = job ? job.value : "";
 
-      const bio = store.any(rdf.sym(webId), VCARD("note"));
+      const bio = store.any(rdf.sym(webId), ns.vcard("note"));
       const bioValue = bio ? bio.value : undefined;
 
-      var telephones = [];
-      store
-        .each(rdf.sym(webId), VCARD("hasTelephone"))
-        .forEach(telephoneBlankId => {
-          store
-            .each(rdf.sym(telephoneBlankId), VCARD("value"))
-            .forEach(telephoneNumber => {
-              telephones.push([telephoneNumber.value, telephoneBlankId.value]);
-            });
+      const telephones = store
+        .each(rdf.sym(webId), ns.vcard("hasTelephone"))
+        .map(telephoneBlankId => {
+          return [
+            (store.any(rdf.sym(telephoneBlankId), ns.vcard("value"))).value,
+            telephoneBlankId.value
+          ];
         });
 
-      this.setState({
+      return {
         webId: webId,
         name: nameValue,
         picture: pictureValue,
@@ -49,9 +47,7 @@ function User(webId) {
         job: jobValue,
         bio: bioValue,
         telephones: telephones,
-        newName: nameValue,
-        editMode: false
-      });
+      };
 
       const nameNode = store.any(rdf.sym(this.webId), ns(rdf).foaf("name"));
       return nameNode.value;
@@ -59,4 +55,4 @@ function User(webId) {
   };
 }
 
-export default User;
+module.exports = User;
