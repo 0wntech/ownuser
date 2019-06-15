@@ -2,11 +2,15 @@
   "name": "your-user",
   "version": "1.0.7",
   "description": "A library to manage user accounts in solid pods",
-  "main": "index.js",
+  "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "ludwigschubi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ludwigschubi/your-user"
+  },
   "license": "ISC",
   "dependencies": {
     "rdflib": "^0.20.1",

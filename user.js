@@ -1,8 +1,6 @@
 const rdf = require("rdflib");
 const ns = require("solid-namespace");
 
-const FOAF = rdf.Namespace("http://xmlns.com/foaf/0.1/");
-
 function User(webId) {
     this.webId = webId;
 
@@ -11,7 +9,7 @@ function User(webId) {
         const fetcher = new rdf.Fetcher(store);
     
         return fetcher.load(this.webId).then(() => {
-            const nameNode = store.any(rdf.sym(this.webId), FOAF("name"));
+            const nameNode = store.any(rdf.sym(this.webId), ns(rdf).foaf("name"));
             return nameNode.value
         });
     }
