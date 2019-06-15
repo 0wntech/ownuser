@@ -11,5 +11,8 @@
   "dependencies": {
     "rdflib": "^0.20.1",
     "solid-namespace": "^0.2.0"
+  },
+  "devDependencies": {
+    "assert": "^2.0.0"
   }
 }

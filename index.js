@@ -1,3 +1,3 @@
-import User from "./user";
+const User = require("./user");
 
-export default User;
+module.exports = User;

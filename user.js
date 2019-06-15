@@ -1,19 +1,20 @@
-import rdf from "rdflib";
-import ns from "solid-namespace";
+const rdf = require("rdflib");
+const ns = require("solid-namespace");
 
-class User {
-    constructor(webId){
-        this.webId = webId;
-    }
+const FOAF = rdf.Namespace("http://xmlns.com/foaf/0.1/");
 
-    getName(){
+function User(webId) {
+    this.webId = webId;
+
+    this.getName = function(){
         const store = rdf.graph();
-        const fetcher = rdf.Fetcher();
-
-        fetcher.load(this.webId).then(() => {
-            return store.any(rdf.sym(this.webId), ns().vcard("fn")) || store.any(rdf.sym(this.webId), ns().foaf("name"));
+        const fetcher = new rdf.Fetcher(store);
+    
+        return fetcher.load(this.webId).then(() => {
+            const nameNode = store.any(rdf.sym(this.webId), FOAF("name"));
+            return nameNode.value
         });
     }
 }
 
-export default User;
+module.exports = User;
