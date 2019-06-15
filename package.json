@@ -2,7 +2,7 @@
   "name": "your-user",
   "version": "1.0.4",
   "description": "A library to manage user accounts in solid pods",
-  "main": "index.js",
+  "main": "user.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
