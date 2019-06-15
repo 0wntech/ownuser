@@ -11,9 +11,9 @@ class User {
         const fetcher = rdf.Fetcher();
 
         fetcher.load(this.webId).then(() => {
-            return store.any(rdf.sym(this.webId), ns.vcard("fn")) || store.any(rdf.sym(this.webId), ns.foaf("name"));
+            return store.any(rdf.sym(this.webId), ns().vcard("fn")) || store.any(rdf.sym(this.webId), ns().foaf("name"));
         });
     }
 }
 
-export default User;
+module.exports = User;
