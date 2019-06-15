@@ -1,5 +1,5 @@
-const rdf = require("rdflib");
-const ns = require("solid-namespace");
+import rdf from "rdflib";
+import ns from "solid-namespace";
 
 function User(webId) {
     this.webId = webId;
@@ -15,4 +15,4 @@ function User(webId) {
     }
 }
 
-module.exports = User;
+export default User;
