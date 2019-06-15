@@ -1,6 +1,6 @@
 {
   "name": "your-user",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A library to manage user accounts in solid pods",
   "main": "user.js",
   "scripts": {
