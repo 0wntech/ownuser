@@ -48,9 +48,6 @@ function User(webId) {
         bio: bioValue,
         telephones: telephones,
       };
-
-      const nameNode = store.any(rdf.sym(this.webId), ns(rdf).foaf("name"));
-      return nameNode.value;
     });
   };
 }
