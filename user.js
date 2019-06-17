@@ -208,20 +208,20 @@ function User(webId) {
                 .then(response => {
                   const userInbox = rdf.sym(userInboxAddress + friendsName);
                   const ownMessages = store
-                    .each(userInbox, FLOW("message"))
+                    .each(userInbox, ns.wf("message"))
                     .map(message => {
                       message = rdf.sym(message);
                       const messageContent = store.any(
                         message,
-                        SIOC("content")
+                        ns.sioc("content")
                       );
                       const messageTimestamp = store.any(
                         message,
-                        DC("created")
+                        ns.dc("created")
                       );
                       const altMessageTimestamp = messageTimestamp
                         ? ""
-                        : store.any(message, TERMS("created"));
+                        : store.any(message, ns.dct("created"));
                       const messageContentValue = messageContent.value;
                       const messageTimestampValue = messageTimestamp
                         ? messageTimestamp.value
@@ -244,20 +244,20 @@ function User(webId) {
                 .load(friendsInboxAddress)
                 .then(response => {
                   const friendMessages = store
-                    .each(rdf.sym(friendsInboxAddress), FLOW("message"))
+                    .each(rdf.sym(friendsInboxAddress), ns.wf("message"))
                     .map(message => {
                       message = rdf.sym(message.value);
                       const messageContent = store.any(
                         message,
-                        SIOC("content")
+                        ns.sioc("content")
                       );
                       const messageTimestamp = store.any(
                         message,
-                        DC("created")
+                        ns.dc("created")
                       );
                       const altMessageTimestamp = messageTimestamp
                         ? ""
-                        : store.any(message, TERMS("created"));
+                        : store.any(message, ns.dct("created"));
                       const messageContentValue = messageContent.value;
                       const messageTimestampValue = messageTimestamp
                         ? messageTimestamp.value
