@@ -20,4 +20,4 @@ const sortMessages = function(ownMessages, friendMessages) {
   }
 };
 
-export default {sortMessages: sortMessages};
+export default {utils: {sortMessages: sortMessages}};
