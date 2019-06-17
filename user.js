@@ -156,13 +156,13 @@ function User(webId) {
     const inboxAddress = webId.replace("profile/card#me", "inbox/");
 
     fetcher.load(inboxAddress).then(() => {
-      const inboxFiles = store.each(rdf.sym(inboxAddress), LDP("contains"));
+      const inboxFiles = store.each(rdf.sym(inboxAddress), ns.ldp("contains"));
       const chats = [];
       const chatChecks = inboxFiles.map(inboxFile => {
         const typeStore = rdf.graph();
         const typeFetcher = new rdf.Fetcher(typeStore);
         return typeFetcher.load(inboxFile.value).then(() => {
-          const chatBool = typeStore.any(null, RDF("type"), MEET("Chat"));
+          const chatBool = typeStore.any(null, ns.rdf("type"), ns.meeting("Chat"));
           if (chatBool) {
             const inboxFileValues = inboxFile.value.split("/");
             const contactName = inboxFileValues[inboxFileValues.length - 1];
