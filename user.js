@@ -112,19 +112,17 @@ function User(webId) {
       const fetcher = new rdf.Fetcher(graph);
       return fetcher.load(this.webId).then(() => {
         const telephones = graph
-        .each(rdf.sym(webId), ns.vcard("hasTelephone"))
-        .map(telephoneBlankId => {
-          return [
-            graph.any(rdf.sym(telephoneBlankId), ns.vcard("value")).value,
-            telephoneBlankId.value
-          ];
-        });
+          .each(rdf.sym(webId), ns.vcard("hasTelephone"))
+          .map(telephoneBlankId => {
+            return [
+              graph.any(rdf.sym(telephoneBlankId), ns.vcard("value")).value,
+              telephoneBlankId.value
+            ];
+          });
         return telephones;
       });
     }
   };
-
-  
 
   this.getProfile = function() {
     const store = rdf.graph();
@@ -147,6 +145,54 @@ function User(webId) {
         bio: bioValue,
         telephones: telephones
       };
+    });
+  };
+
+  this.getMessages = function() {
+    const store = rdf.graph();
+    const fetcher = new rdf.Fetcher(store);
+
+    const webId = this.webId;
+    const inboxAddress = webId.replace("profile/card#me", "inbox/");
+
+    fetcher.load(inboxAddress).then(() => {
+      const inboxFiles = store.each(rdf.sym(inboxAddress), LDP("contains"));
+      const chats = [];
+      const chatChecks = inboxFiles.map(inboxFile => {
+        const typeStore = rdf.graph();
+        const typeFetcher = new rdf.Fetcher(typeStore);
+        return typeFetcher.load(inboxFile.value).then(() => {
+          const chatBool = typeStore.any(null, RDF("type"), MEET("Chat"));
+          if (chatBool) {
+            const inboxFileValues = inboxFile.value.split("/");
+            const contactName = inboxFileValues[inboxFileValues.length - 1];
+            const contactWebId =
+              "https://" + contactName + ".solid.community/profile/card#me";
+            console.log(contactWebId);
+            return contactWebId;
+          } else {
+            return undefined;
+          }
+        });
+      });
+      Promise.all(chatChecks).then(results => {
+        const chats =[];
+        results.forEach((result) => {
+          if(result){
+            chats.push(result)
+          }
+        })
+        console.log(chats);
+
+        // const currentChatName = window.location.href.split("#")[1];
+        // if (currentChatName) {
+        //   const currentChatWebId =
+        //     "https://" + currentChatName + ".solid.community/profile/card#me";
+        //   if (chats.includes(currentChatWebId)) {
+        //     this.fetchMessages(currentChatWebId);
+        //   }
+        // }
+      });
     });
   };
 }
