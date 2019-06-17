@@ -1,5 +1,5 @@
 const assert = require("assert");
-const fileClient = require('solid-file-client');
+const utils = require('./utils.js');
 const User = require("./index");
 
 const user = new User("https://ludwigschubert.solid.community/profile/card#me");

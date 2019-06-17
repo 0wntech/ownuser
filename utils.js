@@ -1,4 +1,4 @@
-const sortMessages = function(ownMessages, friendMessages) {
+function sortMessages (ownMessages, friendMessages) {
   if (ownMessages !== undefined || friendMessages !== undefined) {
     const messages = [];
     for (var message in ownMessages) {
@@ -20,4 +20,4 @@ const sortMessages = function(ownMessages, friendMessages) {
   }
 };
 
-export default {utils: {sortMessages: sortMessages}};
+module.exports = {sortMessages: sortMessages};
