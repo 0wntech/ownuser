@@ -149,6 +149,91 @@ function User(webId) {
     });
   };
 
+  this.getMessagesWith = function(friendsWebId) {
+    const store = rdf.graph();
+    const fetcher = new rdf.Fetcher(store);
+    const username = this.webId.split(".")[0].replace("https://", "");
+    const userInboxAddress = this.webId.replace("profile/card#me", "inbox/");
+
+    const friendsName = friendsWebId.split(".")[0].replace("https://", "");
+    return fetcher
+      .load(userInboxAddress + friendsName)
+      .then(response => {
+        const userInbox = rdf.sym(userInboxAddress + friendsName);
+        const ownMessages = store
+          .each(userInbox, ns.wf("message"))
+          .map(message => {
+            message = rdf.sym(message);
+            const messageContent = store.any(message, ns.sioc("content"));
+            const messageTimestamp = store.any(message, ns.dc("created"));
+            const altMessageTimestamp = messageTimestamp
+              ? ""
+              : store.any(message, ns.dct("created"));
+            const messageContentValue = messageContent.value;
+            const messageTimestampValue = messageTimestamp
+              ? messageTimestamp.value
+              : altMessageTimestamp.value;
+            return {
+              content: messageContentValue,
+              created: messageTimestampValue
+            };
+          });
+        return ownMessages;
+      })
+      .catch(err => {
+        console.log("You haven't send any messages yet!");
+      });
+  };
+
+  this.getMessagesFrom = function(friendsWebId) {
+    const store = rdf.graph();
+    const fetcher = new rdf.Fetcher(store);
+    const username = this.webId.split(".")[0].replace("https://", "");
+    const friendsInboxAddress = friendsWebId.replace(
+      "profile/card#me",
+      "inbox/" + username
+    );
+
+    return fetcher
+      .load(friendsInboxAddress)
+      .then(response => {
+        const friendMessages = store
+          .each(rdf.sym(friendsInboxAddress), ns.wf("message"))
+          .map(message => {
+            message = rdf.sym(message.value);
+            const messageContent = store.any(message, ns.sioc("content"));
+            const messageTimestamp = store.any(message, ns.dc("created"));
+            const altMessageTimestamp = messageTimestamp
+              ? ""
+              : store.any(message, ns.dct("created"));
+            const messageContentValue = messageContent.value;
+            const messageTimestampValue = messageTimestamp
+              ? messageTimestamp.value
+              : altMessageTimestamp.value;
+            return {
+              content: messageContentValue,
+              created: messageTimestampValue
+            };
+          });
+        return friendMessages;
+      })
+      .catch(err => {
+        //console.log("This friend has no chat with you yet.");
+      });
+  };
+
+  this.getChatWith = function(friendsWebId) {
+    return this.getMessagesWith(friendsWebId).then(ownMessages => {
+      return Promise.resolve(
+        this.getMessagesFrom(friendsWebId).then(friendMessages => {
+          var chat = {};
+          chat[friendsWebId] = utils.sortMessages(ownMessages, friendMessages);
+          return chat;
+        })
+      );
+    });
+  };
+
   this.getMessages = function() {
     const store = rdf.graph();
     const fetcher = new rdf.Fetcher(store);
@@ -156,10 +241,9 @@ function User(webId) {
     const webId = this.webId;
     const inboxAddress = webId.replace("profile/card#me", "inbox/");
 
-    fetcher.load(inboxAddress).then(() => {
+    return fetcher.load(inboxAddress).then(() => {
       const inboxFiles = store.each(rdf.sym(inboxAddress), ns.ldp("contains"));
-      const chats = [];
-      const chatChecks = inboxFiles.map(inboxFile => {
+      const chats = inboxFiles.map(inboxFile => {
         const typeStore = rdf.graph();
         const typeFetcher = new rdf.Fetcher(typeStore);
         return typeFetcher.load(inboxFile.value).then(() => {
@@ -173,114 +257,21 @@ function User(webId) {
             const contactName = inboxFileValues[inboxFileValues.length - 1];
             const contactWebId =
               "https://" + contactName + ".solid.community/profile/card#me";
-            console.log(contactWebId);
-            return contactWebId;
+            return this.getChatWith(contactWebId);
           } else {
             return undefined;
           }
         });
       });
-      Promise.all(chatChecks).then(results => {
+      return Promise.all(chats).then(results => {
         const chats = [];
         results.forEach(result => {
           if (result) {
-            const friendsWebId = result;
-            const store = rdf.graph();
-            const fetcher = new rdf.Fetcher(store);
-
-            const username = this.webId.split(".")[0].replace("https://", "");
-            const userInboxAddress = this.webId.replace(
-              "profile/card#me",
-              "inbox/"
-            );
-
-            const friendsName = friendsWebId
-              .split(".")[0]
-              .replace("https://", "");
-            const friendsInboxAddress = friendsWebId.replace(
-              "profile/card#me",
-              "inbox/" + username
-            );
-
-            const messagePromises = [
-              fetcher
-                .load(userInboxAddress + friendsName)
-                .then(response => {
-                  const userInbox = rdf.sym(userInboxAddress + friendsName);
-                  const ownMessages = store
-                    .each(userInbox, ns.wf("message"))
-                    .map(message => {
-                      message = rdf.sym(message);
-                      const messageContent = store.any(
-                        message,
-                        ns.sioc("content")
-                      );
-                      const messageTimestamp = store.any(
-                        message,
-                        ns.dc("created")
-                      );
-                      const altMessageTimestamp = messageTimestamp
-                        ? ""
-                        : store.any(message, ns.dct("created"));
-                      const messageContentValue = messageContent.value;
-                      const messageTimestampValue = messageTimestamp
-                        ? messageTimestamp.value
-                        : altMessageTimestamp.value;
-                      return {
-                        content: messageContentValue,
-                        created: messageTimestampValue
-                      };
-                    });
-                  console.log(ownMessages);
-                  return ownMessages;
-                })
-                .catch(err => {
-                  console.log("You haven't send any messages yet!");
-                })
-            ];
-
-            messagePromises.push(
-              fetcher
-                .load(friendsInboxAddress)
-                .then(response => {
-                  const friendMessages = store
-                    .each(rdf.sym(friendsInboxAddress), ns.wf("message"))
-                    .map(message => {
-                      message = rdf.sym(message.value);
-                      const messageContent = store.any(
-                        message,
-                        ns.sioc("content")
-                      );
-                      const messageTimestamp = store.any(
-                        message,
-                        ns.dc("created")
-                      );
-                      const altMessageTimestamp = messageTimestamp
-                        ? ""
-                        : store.any(message, ns.dct("created"));
-                      const messageContentValue = messageContent.value;
-                      const messageTimestampValue = messageTimestamp
-                        ? messageTimestamp.value
-                        : altMessageTimestamp.value;
-                      return {
-                        content: messageContentValue,
-                        created: messageTimestampValue
-                      };
-                    });
-                  return friendMessages;
-                })
-                .catch(err => {
-                  console.log("This friend has no chat with you yet.");
-                })
-            );
-
-            Promise.all(messagePromises).then(results => {
-              const messages = utils.sortMessages(results[0], results[1]);
-              chats.push({friendsWebId: messages});
-            });
+            console.log(result);
+            chats.push(result);
           }
         });
-        console.log(chats);
+        return chats;
       });
     });
   };
