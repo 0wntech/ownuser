@@ -1,130 +1,52 @@
 const rdf = require("rdflib");
 const ns = require("solid-namespace")(rdf);
-const utils = require("./utils.js");
+
+const utils = require("../utils.js");
+const { getName, setName } = require("./name.js");
+const { getBio, setBio } = require("./bio.js");
+const { getJob, setJob } = require("./job.js");
+const { getPicture, setPicture } = require("./picture.js");
+const {
+  getTelephones,
+  setTelephone,
+  addTelephone,
+  deleteTelephone
+} = require("./telephones.js");
+const {
+  getEmails,
+  setEmail,
+  addEmail,
+  deleteEmail
+} = require("./emails.js");
 
 function User(webId) {
   this.webId = webId;
+  this.graph = rdf.graph();
+  this.fetcher = new rdf.Fetcher(this.graph);
+  this.updater = new rdf.UpdateManager(this.graph);
 
-  this.getName = function(graph) {
-    if (graph) {
-      const name = graph.any(rdf.sym(webId), ns.foaf("name"));
-      const nameValue = name ? name.value : undefined;
-      return nameValue;
-    } else {
-      const graph = rdf.graph();
-      const fetcher = new rdf.Fetcher(graph);
-      return fetcher.load(this.webId).then(() => {
-        const name = graph.any(rdf.sym(webId), ns.foaf("name"));
-        const nameValue = name ? name.value : undefined;
-        return nameValue;
-      });
-    }
-  };
+  this.getName = getName;
+  this.setName = setName;
 
-  this.getEmails = function(graph) {
-    if (graph) {
-      const emails = graph
-        .each(rdf.sym(webId), ns.vcard("hasEmail"))
-        .map(emailBlankId => {
-          return [
-            graph.any(rdf.sym(emailBlankId), ns.vcard("value")).value,
-            emailBlankId.value
-          ];
-        });
-      return emails;
-    } else {
-      const graph = rdf.graph();
-      const fetcher = new rdf.Fetcher(graph);
-      return fetcher.load(this.webId).then(() => {
-        const emails = graph
-          .each(rdf.sym(webId), ns.vcard("hasEmail"))
-          .map(emailBlankId => {
-            return [
-              graph.any(rdf.sym(emailBlankId), ns.vcard("value")).value,
-              emailBlankId.value
-            ];
-          });
-        return emails;
-      });
-    }
-  };
+  this.getJob = getJob;
+  this.setJob = setJob;
 
-  this.getJob = function(graph) {
-    if (graph) {
-      const job = graph.any(rdf.sym(webId), ns.vcard("role"));
-      const jobValue = job ? job.value : "";
-      return jobValue;
-    } else {
-      const graph = rdf.graph();
-      const fetcher = new rdf.Fetcher(graph);
-      return fetcher.load(this.webId).then(() => {
-        const job = graph.any(rdf.sym(webId), ns.vcard("role"));
-        const jobValue = job ? job.value : "";
-        return jobValue;
-      });
-    }
-  };
+  this.getBio = getBio;
+  this.setBio = setBio;
 
-  this.getPicture = function(graph) {
-    if (graph) {
-      const picture = graph.any(rdf.sym(webId), ns.vcard("hasPhoto"));
-      const pictureValue = picture ? picture.value : "";
-      return pictureValue;
-    } else {
-      const graph = rdf.graph();
-      const fetcher = new rdf.Fetcher(graph);
-      return fetcher.load(this.webId).then(() => {
-        const picture = graph.any(rdf.sym(webId), ns.vcard("hasPhoto"));
-        const pictureValue = picture ? picture.value : "";
-        return pictureValue;
-      });
-    }
-  };
+  this.getPicture = getPicture;
+  this.setPicture = setPicture;
 
-  this.getBio = function(graph) {
-    if (graph) {
-      const bio = graph.any(rdf.sym(webId), ns.vcard("note"));
-      const bioValue = bio ? bio.value : undefined;
-      return bioValue;
-    } else {
-      const graph = rdf.graph();
-      const fetcher = new rdf.Fetcher(graph);
-      return fetcher.load(this.webId).then(() => {
-        const bio = graph.any(rdf.sym(webId), ns.vcard("note"));
-        const bioValue = bio ? bio.value : undefined;
-        return bioValue;
-      });
-    }
-  };
+  this.getEmails = getEmails;
+  this.setEmail = setEmail;
+  this.addEmail = addEmail;
+  this.deleteEmail = deleteEmail;
 
-  this.getTelephones = function(graph) {
-    if (graph) {
-      const telephones = graph
-        .each(rdf.sym(webId), ns.vcard("hasTelephone"))
-        .map(telephoneBlankId => {
-          return [
-            graph.any(rdf.sym(telephoneBlankId), ns.vcard("value")).value,
-            telephoneBlankId.value
-          ];
-        });
-      return telephones;
-    } else {
-      const graph = rdf.graph();
-      const fetcher = new rdf.Fetcher(graph);
-      return fetcher.load(this.webId).then(() => {
-        const telephones = graph
-          .each(rdf.sym(webId), ns.vcard("hasTelephone"))
-          .map(telephoneBlankId => {
-            return [
-              graph.any(rdf.sym(telephoneBlankId), ns.vcard("value")).value,
-              telephoneBlankId.value
-            ];
-          });
-        return telephones;
-      });
-    }
-  };
-
+  this.getTelephones = getTelephones;
+  this.setTelephone = setTelephone;
+  this.addTelephone = addTelephone;
+  this.deleteTelephone = deleteTelephone;
+  
   this.getProfile = function() {
     const store = rdf.graph();
     const fetcher = new rdf.Fetcher(store);
