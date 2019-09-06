@@ -1,6 +1,6 @@
 {
-  "name": "your-user",
-  "version": "1.1.7",
+  "name": "ownuser",
+  "version": "1.1.12",
   "description": "A library to manage user accounts in solid pods",
   "main": "./index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "ludwigschubi",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ludwigschubi/your-user"
+    "url": "https://github.com/ludwigschubi/ownuser"
   },
   "license": "ISC",
   "dependencies": {

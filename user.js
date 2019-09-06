@@ -233,48 +233,6 @@ function User(webId) {
       );
     });
   };
-
-  this.getMessages = function() {
-    const store = rdf.graph();
-    const fetcher = new rdf.Fetcher(store);
-
-    const webId = this.webId;
-    const inboxAddress = webId.replace("profile/card#me", "inbox/");
-
-    return fetcher.load(inboxAddress).then(() => {
-      const inboxFiles = store.each(rdf.sym(inboxAddress), ns.ldp("contains"));
-      const chats = inboxFiles.map(inboxFile => {
-        const typeStore = rdf.graph();
-        const typeFetcher = new rdf.Fetcher(typeStore);
-        return typeFetcher.load(inboxFile.value).then(() => {
-          const chatBool = typeStore.any(
-            null,
-            ns.rdf("type"),
-            ns.meeting("Chat")
-          );
-          if (chatBool) {
-            const inboxFileValues = inboxFile.value.split("/");
-            const contactName = inboxFileValues[inboxFileValues.length - 1];
-            const contactWebId =
-              "https://" + contactName + ".solid.community/profile/card#me";
-            return this.getChatWith(contactWebId);
-          } else {
-            return undefined;
-          }
-        });
-      });
-      return Promise.all(chats).then(results => {
-        const chats = [];
-        results.forEach(result => {
-          if (result) {
-            console.log(result);
-            chats.push(result);
-          }
-        });
-        return chats;
-      });
-    });
-  };
 }
 
 module.exports = User;
