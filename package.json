@@ -1,6 +1,6 @@
 {
   "name": "ownuser",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A library to manage user accounts in solid pods",
   "main": "./user/index.js",
   "scripts": {
