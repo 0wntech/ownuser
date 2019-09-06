@@ -18,6 +18,6 @@
   },
   "devDependencies": {
     "assert": "^2.0.0",
-    "solid-file-client": "^0.5.1"
+    "solid-auth-cli": "^1.0.8"
   }
 }
