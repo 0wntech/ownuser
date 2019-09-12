@@ -2,7 +2,7 @@
   "name": "ownuser",
   "version": "1.2.0",
   "description": "A library to manage user accounts in solid pods",
-  "main": "./user/index.js",
+  "main": "./index.js",
   "scripts": {
     "test": "mocha"
   },
