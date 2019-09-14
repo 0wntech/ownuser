@@ -1,0 +1,44 @@
+const rdf = require("rdflib");
+const ns = require("solid-namespace")(rdf);
+
+module.exports.getBio = function(graph) {
+  if (graph) {
+    const bio = graph.any(rdf.sym(this.webId), ns.vcard("note"));
+    const bioValue = bio ? bio.value : undefined;
+    return bioValue;
+  } else {
+    const fetcher = this.fetcher;
+    return fetcher.load(this.webId).then(() => {
+      const bio = this.graph.any(rdf.sym(this.webId), ns.vcard("note"));
+      const bioValue = bio ? bio.value : undefined;
+      return bioValue;
+    });
+  }
+};
+
+module.exports.setBio = function(newBio) {
+  if (newBio) {
+    return this.getBio().then(bio => {
+      const ins = [
+        rdf.st(
+          rdf.sym(this.webId),
+          ns.vcard("note"),
+          rdf.lit(newBio),
+          rdf.sym(this.webId).doc()
+        )
+      ];
+
+      const del = [
+        rdf.st(
+          rdf.sym(this.webId),
+          ns.vcard("note"),
+          rdf.lit(bio),
+          rdf.sym(this.webId).doc()
+        )
+      ];
+      return this.updater.update(del, ins);
+    });
+  } else {
+    console.error("Please specify a bio to update.");
+  }
+};
