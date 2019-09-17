@@ -13,32 +13,7 @@ describe("Emails", function() {
     const credentials = await auth.getCredentials();
     await auth.login(credentials);
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
-
-    const emails = await user.getEmails();
-    await Promise.all(
-      emails.map(async email => {
-        return user.deleteEmail(email);
-      })
-    );
-    return Promise.all(
-      config.emails.map(async configEmail => {
-        return user.addEmail(configEmail);
-      })
-    );
-  });
-
-  afterEach("Resetting emails...", async function() {
-    const emails = await user.getEmails();
-    await Promise.all(
-      emails.map(async email => {
-        return user.deleteEmail(email);
-      })
-    );
-    return Promise.all(
-      config.emails.map(async configEmail => {
-        return user.addEmail(configEmail);
-      })
-    );
+    await user.setEmails(config.emails);
   });
 
   describe("getEmails()", function() {
@@ -48,25 +23,17 @@ describe("Emails", function() {
     });
   });
 
-  describe("setEmail()", function() {
+  describe("setEmails()", function() {
     it("should modify the specified email field", async function() {
       const newEmail = "lalasepp1@gmail.com";
-
-      await user.setEmail(config.emails[0], newEmail);
+      await user.setEmails(newEmail);
+      
       let emails = await user.getEmails();
-      expect(emails[0]).to.equal(newEmail);
+      expect(emails).to.deep.equal([newEmail]);
     });
 
     it("shouldn't modify the email field without specifying an email to set", async function() {
-      await user.setEmail();
-      let emails = await user.getEmails();
-      expect(emails).to.deep.equal(config.emails);
-    });
-
-    it("shouldn't modify the a specified email field without specifying new email", async function() {
-      await user.setEmail(config.emails[0]);
-      let emails = await user.getEmails();
-      expect(emails).to.deep.equal(config.emails);
+      expect(() => user.setEmails()).to.throw(Error);
     });
   });
 });
