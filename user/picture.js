@@ -19,20 +19,20 @@ module.exports.getPicture = function(graph) {
 module.exports.setPicture = function(newPicture) {
   if (newPicture) {
     return this.getPicture().then(picture => {
+      const del = [];
+      const delSt = this.graph.statementsMatching(
+        rdf.sym(this.webId),
+        ns.vcard("hasPhoto")
+      );
+      delSt.forEach(st => {
+        del.push(st);
+      });
+
       const ins = [
         rdf.st(
           rdf.sym(this.webId),
           ns.vcard("hasPhoto"),
           rdf.sym(newPicture),
-          rdf.sym(this.webId).doc()
-        )
-      ];
-
-      const del = [
-        rdf.st(
-          rdf.sym(this.webId),
-          ns.vcard("hasPhoto"),
-          rdf.sym(picture),
           rdf.sym(this.webId).doc()
         )
       ];

@@ -32,14 +32,13 @@ module.exports.setProfile = function(profile) {
       const del = [];
       const ins = [];
       if (name && name !== oldProfile.name) {
-        del.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.foaf("name"),
-            rdf.lit(oldProfile.name),
-            rdf.sym(this.webId).doc()
-          )
+        const delSt = this.graph.matchingStatements(
+          rdf.sym(this.webId),
+          ns.foaf("name")
         );
+        delSt.forEach(st => {
+          del.push(st);
+        });
 
         ins.push(
           rdf.st(
@@ -52,14 +51,13 @@ module.exports.setProfile = function(profile) {
       }
 
       if (job && job !== oldProfile.job) {
-        del.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("role"),
-            rdf.lit(oldProfile.job),
-            rdf.sym(this.webId).doc()
-          )
+        const delSt = this.graph.matchingStatements(
+          rdf.sym(this.webId),
+          ns.vcard("role")
         );
+        delSt.forEach(st => {
+          del.push(st);
+        });
 
         ins.push(
           rdf.st(
@@ -72,14 +70,13 @@ module.exports.setProfile = function(profile) {
       }
 
       if (picture && picture !== oldProfile.picture) {
-        del.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("hasPhoto"),
-            rdf.lit(oldProfile.picture),
-            rdf.sym(this.webId).doc()
-          )
+        const delSt = this.graph.matchingStatements(
+          rdf.sym(this.webId),
+          ns.vcard("hasPhoto")
         );
+        delSt.forEach(st => {
+          del.push(st);
+        });
 
         ins.push(
           rdf.st(
@@ -92,14 +89,13 @@ module.exports.setProfile = function(profile) {
       }
 
       if (bio && bio !== oldProfile.bio) {
-        del.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("note"),
-            rdf.lit(oldProfile.bio),
-            rdf.sym(this.webId).doc()
-          )
+        const delSt = this.graph.matchingStatements(
+          rdf.sym(this.webId),
+          ns.vcard("note")
         );
+        delSt.forEach(st => {
+          del.push(st);
+        });
 
         ins.push(
           rdf.st(

@@ -19,14 +19,14 @@ module.exports.getName = function(graph) {
 module.exports.setName = function(newName) {
   if (newName) {
     return this.getName().then(name => {
-      const del = [
-        rdf.st(
-          rdf.sym(this.webId),
-          ns.foaf("name"),
-          rdf.lit(name),
-          rdf.sym(this.webId).doc()
-        )
-      ];
+      const del = [];
+      const delSt = this.graph.statementsMatching(
+        rdf.sym(this.webId),
+        ns.foaf("name")
+      );
+      delSt.forEach(st => {
+        del.push(st);
+      });
 
       const ins = [
         rdf.st(
