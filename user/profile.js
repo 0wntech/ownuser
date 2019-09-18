@@ -32,7 +32,7 @@ module.exports.setProfile = function(profile) {
       const del = [];
       const ins = [];
       if (name && name !== oldProfile.name) {
-        const delSt = this.graph.matchingStatements(
+        const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.foaf("name")
         );
@@ -51,7 +51,7 @@ module.exports.setProfile = function(profile) {
       }
 
       if (job && job !== oldProfile.job) {
-        const delSt = this.graph.matchingStatements(
+        const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("role")
         );
@@ -70,7 +70,7 @@ module.exports.setProfile = function(profile) {
       }
 
       if (picture && picture !== oldProfile.picture) {
-        const delSt = this.graph.matchingStatements(
+        const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("hasPhoto")
         );
@@ -89,7 +89,7 @@ module.exports.setProfile = function(profile) {
       }
 
       if (bio && bio !== oldProfile.bio) {
-        const delSt = this.graph.matchingStatements(
+        const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("note")
         );
