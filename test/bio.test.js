@@ -12,7 +12,7 @@ describe("Bio", function() {
 
   before("Setting up auth...", async function() {
     const credentials = await auth.getCredentials();
-    await auth.login(credentials);
+    const session = await auth.login(credentials);
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
   });
 

@@ -19,20 +19,20 @@ module.exports.getJob = function(graph) {
 module.exports.setJob = function(newJob) {
   if (newJob) {
     return this.getJob().then(job => {
+      const del = [];
+      const delSt = this.graph.statementsMatching(
+        rdf.sym(this.webId),
+        ns.vcard("role")
+      );
+      delSt.forEach(st => {
+        del.push(st);
+      });
+
       const ins = [
         rdf.st(
           rdf.sym(this.webId),
           ns.vcard("role"),
           rdf.lit(newJob),
-          rdf.sym(this.webId).doc()
-        )
-      ];
-
-      const del = [
-        rdf.st(
-          rdf.sym(this.webId),
-          ns.vcard("role"),
-          rdf.lit(job),
           rdf.sym(this.webId).doc()
         )
       ];

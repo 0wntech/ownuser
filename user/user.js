@@ -6,18 +6,9 @@ const { getName, setName } = require("./name.js");
 const { getBio, setBio } = require("./bio.js");
 const { getJob, setJob } = require("./job.js");
 const { getPicture, setPicture } = require("./picture.js");
-const {
-  getTelephones,
-  setTelephone,
-  addTelephone,
-  deleteTelephone
-} = require("./telephones.js");
-const {
-  getEmails,
-  setEmail,
-  addEmail,
-  deleteEmail
-} = require("./emails.js");
+const { getTelephones, setTelephones, addTelephone, deleteTelephone } = require("./telephones.js");
+const { getEmails, setEmails, deleteEmail, addEmail} = require("./emails.js");
+const { getProfile, setProfile } = require("./profile.js");
 
 function User(webId) {
   this.webId = webId;
@@ -25,51 +16,26 @@ function User(webId) {
   this.fetcher = new rdf.Fetcher(this.graph);
   this.updater = new rdf.UpdateManager(this.graph);
 
-  this.getName = getName;
-  this.setName = setName;
+  this.getName = getName.bind(this);
+  this.setName = setName.bind(this);
 
-  this.getJob = getJob;
-  this.setJob = setJob;
+  this.getJob = getJob.bind(this);
+  this.setJob = setJob.bind(this);
 
-  this.getBio = getBio;
-  this.setBio = setBio;
+  this.getBio = getBio.bind(this);
+  this.setBio = setBio.bind(this);
 
-  this.getPicture = getPicture;
-  this.setPicture = setPicture;
+  this.getPicture = getPicture.bind(this);
+  this.setPicture = setPicture.bind(this);
 
-  this.getEmails = getEmails;
-  this.setEmail = setEmail;
-  this.addEmail = addEmail;
-  this.deleteEmail = deleteEmail;
-
-  this.getTelephones = getTelephones;
-  this.setTelephone = setTelephone;
-  this.addTelephone = addTelephone;
-  this.deleteTelephone = deleteTelephone;
+  this.getEmails = getEmails.bind(this);
+  this.setEmails = setEmails.bind(this);
   
-  this.getProfile = function() {
-    const store = rdf.graph();
-    const fetcher = new rdf.Fetcher(store);
+  this.getTelephones = getTelephones.bind(this);
+  this.setTelephones = setTelephones.bind(this);
 
-    return fetcher.load(this.webId).then(() => {
-      const nameValue = this.getName(store);
-      const emails = this.getEmails(store);
-      const jobValue = this.getJob(store);
-      const pictureValue = this.getPicture(store);
-      const bioValue = this.getBio(store);
-      const telephones = this.getTelephones(store);
-
-      return {
-        webId: webId,
-        name: nameValue,
-        picture: pictureValue,
-        emails: emails,
-        job: jobValue,
-        bio: bioValue,
-        telephones: telephones
-      };
-    });
-  };
+  this.getProfile = getProfile.bind(this);
+  this.setProfile = setProfile.bind(this);
 
   this.getMessagesWith = function(friendsWebId) {
     const store = rdf.graph();
