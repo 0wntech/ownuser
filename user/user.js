@@ -9,6 +9,7 @@ const { getPicture, setPicture } = require("./picture.js");
 const { getTelephones, setTelephones, addTelephone, deleteTelephone } = require("./telephones.js");
 const { getEmails, setEmails, deleteEmail, addEmail} = require("./emails.js");
 const { getProfile, setProfile } = require("./profile.js");
+const { getContacts, setContacts } = require("./contacts.js");
 
 function User(webId) {
   this.webId = webId;
@@ -36,6 +37,9 @@ function User(webId) {
 
   this.getProfile = getProfile.bind(this);
   this.setProfile = setProfile.bind(this);
+  
+  this.getContacts = getContacts.bind(this);
+  this.setContacts = setContacts.bind(this);
 
   this.getMessagesWith = function(friendsWebId) {
     const store = rdf.graph();
