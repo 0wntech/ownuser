@@ -3,7 +3,7 @@ const ns = require("solid-namespace")(rdf);
 
 module.exports.getContacts = async function(store) {
   const webId = this.webId;
-  
+
   if (!store) {
     const fetcher = this.fetcher;
     store = this.graph;
@@ -51,4 +51,32 @@ module.exports.setContacts = function(contacts) {
 
     return updater.update(toDelete, toAdd);
   });
+};
+
+module.exports.addContact = function(contactWebId) {
+  const webId = this.webId;
+  const updater = this.updater;
+
+  const del = [];
+  const ins = rdf.st(
+    rdf.sym(webId),
+    ns.foaf("knows"),
+    rdf.sym(contactWebId),
+    rdf.sym(webId).doc()
+  );
+  return updater.update(del, ins);
+};
+
+module.exports.deleteContact = function(contactWebId) {
+  const webId = this.webId;
+  const updater = this.updater;
+
+  const del = rdf.st(
+    rdf.sym(webId),
+    ns.foaf("knows"),
+    rdf.sym(contactWebId),
+    rdf.sym(webId).doc()
+  );
+  const ins = [];
+  return updater.update(del, ins);
 };

@@ -9,7 +9,7 @@ const { getPicture, setPicture } = require("./picture.js");
 const { getTelephones, setTelephones, addTelephone, deleteTelephone } = require("./telephones.js");
 const { getEmails, setEmails, deleteEmail, addEmail} = require("./emails.js");
 const { getProfile, setProfile } = require("./profile.js");
-const { getContacts, setContacts } = require("./contacts.js");
+const { getContacts, setContacts, addContact, deleteContact } = require("./contacts.js");
 
 function User(webId) {
   this.webId = webId;
@@ -40,6 +40,8 @@ function User(webId) {
   
   this.getContacts = getContacts.bind(this);
   this.setContacts = setContacts.bind(this);
+  this.addContact = addContact.bind(this);
+  this.deleteContact = deleteContact.bind(this);
 
   this.getMessagesWith = function(friendsWebId) {
     const store = rdf.graph();
