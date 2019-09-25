@@ -1,10 +1,11 @@
 const rdf = require("rdflib");
 const ns = require("solid-namespace")(rdf);
+const User = require("../index");
 
-module.exports.getContacts = async function(store) {
+module.exports.getContacts = async function(options = {}) {
   const webId = this.webId;
 
-  if (!store) {
+  if (!options.store) {
     const fetcher = this.fetcher;
     store = this.graph;
     await fetcher.load(webId);
@@ -26,7 +27,7 @@ module.exports.setContacts = function(contacts) {
   const webId = this.webId;
   const updater = this.updater;
   const store = this.graph;
-  return this.getContacts().then(prevContacts => {
+  return this.getContacts({ webIdsOnly: true }).then(prevContacts => {
     const toDelete = prevContacts
       .filter(contact => {
         return !contacts.includes(contact);

@@ -1,11 +1,19 @@
 const rdf = require("rdflib");
 const ns = require("solid-namespace")(rdf);
 
-module.exports.getProfile = function() {
-  const store = this.graph;
-  const fetcher = this.fetcher;
+module.exports.getProfile = function(webId) {
+  let store;
+  let fetcher;
+  if (webId) {
+    store = rdf.graph();
+    fetcher = new rdf.Fetcher(store);
+  } else {
+    store = this.graph;
+    fetcher = this.fetcher;
+    webId = this.webId;
+  }
 
-  return fetcher.load(this.webId).then(() => {
+  return fetcher.load(webId).then(() => {
     const nameValue = this.getName(store);
     const emails = this.getEmails(store);
     const jobValue = this.getJob(store);
@@ -14,7 +22,7 @@ module.exports.getProfile = function() {
     const telephones = this.getTelephones(store);
 
     return {
-      webId: this.webId,
+      webId: webId,
       name: nameValue,
       picture: pictureValue,
       emails: emails,

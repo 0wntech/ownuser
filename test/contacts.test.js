@@ -11,6 +11,7 @@ describe("Contacts", function() {
   user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
 
   before("Setting up auth...", async function() {
+    this.timeout(4000);
     const credentials = await auth.getCredentials();
     const session = await auth.login(credentials);
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
@@ -22,7 +23,7 @@ describe("Contacts", function() {
 
   describe("getContacts()", function() {
     it("should fetch the right contacts from the profile", async function() {
-      const contacts = await user.getContacts();
+      const contacts = await user.getContacts({ webIdsOnly: true });
       expect(contacts).to.deep.equal(config.contacts);
     });
   });
@@ -30,14 +31,17 @@ describe("Contacts", function() {
   describe("setContacts()", function() {
     it("should modify the contact field", async function() {
       const newContact = "https://ludwigschubi.solid.community/profile/card#me";
-      
+
       await user.setContacts(newContact);
-      let contacts = await user.getContacts();
+      let contacts = await user.getContacts({ webIdsOnly: true });
       expect(contacts).to.deep.equal([newContact]);
     });
 
     it("shouldn't modify the contact field and throw an error", async function() {
       expect(() => user.setContacts()).to.throw(Error);
+      user.getContacts().then((contacts) => {
+        console.log(contacts);
+      })
     });
   });
 });
