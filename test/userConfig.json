@@ -6,5 +6,6 @@
   "bio": "Hacking",
   "emails": ["lalasepp@gmail.com"],
   "telephones": ["03055493333"],
-  "contacts": ["https://bejow.owntech.de/profile/card#me", "https://ludwig.owntech.de/profile/card#me"]
+  "contacts": ["https://bejow.owntech.de/profile/card#me", "https://ludwig.owntech.de/profile/card#me"],
+  "trustedApps": ["http://localhost:3000"]
 }

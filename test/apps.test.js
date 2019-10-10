@@ -7,7 +7,7 @@ const config = require("./userConfig.json");
 
 const user = new User(config.webId);
 
-describe("Contacts", function() {
+describe("Apps", function() {
   user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
 
   before("Setting up auth...", async function() {
@@ -17,24 +17,24 @@ describe("Contacts", function() {
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
   });
 
-  afterEach("Resetting contacts...", async function() {
-    await user.setContacts(config.contacts);
+  afterEach("Resetting apps...", async function() {
+    await user.setApps(config.trustedApps);
   });
 
-  describe("getContacts()", function() {
-    it("should fetch the right contacts from the profile", async function() {
-      const contacts = await user.getContacts({ webIdsOnly: true });
-      expect(contacts).to.deep.equal(config.contacts);
+  describe("getApps()", function() {
+    it("should fetch the trusted apps from the profile", async function() {
+      const apps = await user.getApps();
+      expect(apps).to.deep.equal(config.trustedApps);
     });
   });
 
-  describe("setContacts()", function() {
-    it("should modify the contact field", async function() {
-      const newContact = "https://ludwigschubi.solid.community/profile/card#me";
+  describe("setApps()", function() {
+    it("should modify the trusted apps field", async function() {
+      const trustedApps = [];
 
-      await user.setContacts(newContact);
-      let contacts = await user.getContacts({ webIdsOnly: true });
-      expect(contacts).to.deep.equal([newContact]);
+      await user.setApps([]);
+      const apps = await user.getApps();
+      expect(apps).to.deep.equal([]);
     });
 
     it("shouldn't modify the contact field and throw an error", async function() {
