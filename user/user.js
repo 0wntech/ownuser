@@ -6,11 +6,17 @@ const { getName, setName } = require("./name.js");
 const { getBio, setBio } = require("./bio.js");
 const { getJob, setJob } = require("./job.js");
 const { getPicture, setPicture } = require("./picture.js");
-const { getTelephones, setTelephones, addTelephone, deleteTelephone } = require("./telephones.js");
-const { getEmails, setEmails, deleteEmail, addEmail} = require("./emails.js");
+const { getTelephones, setTelephones } = require("./telephones.js");
+const { getEmails, setEmails } = require("./emails.js");
 const { getProfile, setProfile } = require("./profile.js");
 const { getApps, setApps } = require("./apps.js");
-const { getContacts, setContacts, addContact, deleteContact } = require("./contacts.js");
+const {
+  getContacts,
+  setContacts,
+  addContact,
+  deleteContact,
+  getContactRecommendations
+} = require("./contacts.js");
 
 function User(webId) {
   this.webId = webId;
@@ -32,13 +38,13 @@ function User(webId) {
 
   this.getEmails = getEmails.bind(this);
   this.setEmails = setEmails.bind(this);
-  
+
   this.getTelephones = getTelephones.bind(this);
   this.setTelephones = setTelephones.bind(this);
 
   this.getProfile = getProfile.bind(this);
   this.setProfile = setProfile.bind(this);
-  
+
   this.getApps = getApps.bind(this);
   this.setApps = setApps.bind(this);
 
@@ -46,6 +52,7 @@ function User(webId) {
   this.setContacts = setContacts.bind(this);
   this.addContact = addContact.bind(this);
   this.deleteContact = deleteContact.bind(this);
+  this.getContactRecommendations = getContactRecommendations.bind(this);
 
   this.getMessagesWith = function(friendsWebId) {
     const store = rdf.graph();
