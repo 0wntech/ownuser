@@ -13,17 +13,15 @@ describe("Apps", function() {
   before("Setting up auth...", async function() {
     this.timeout(4000);
     const credentials = await auth.getCredentials();
-    const session = await auth.login(credentials);
+    await auth.login(credentials);
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
-  });
-
-  afterEach("Resetting apps...", async function() {
     await user.setApps(config.trustedApps);
   });
 
   describe("getApps()", function() {
     it("should fetch the trusted apps from the profile", async function() {
       const apps = await user.getApps();
+      console.log(apps)
       expect(apps).to.deep.equal(config.trustedApps);
     });
   });
@@ -32,13 +30,9 @@ describe("Apps", function() {
     it("should modify the trusted apps field", async function() {
       const trustedApps = [];
 
-      await user.setApps([]);
+      await user.setApps(trustedApps);
       const apps = await user.getApps();
-      expect(apps).to.deep.equal([]);
-    });
-
-    it("shouldn't modify the contact field and throw an error", async function() {
-      expect(() => user.setContacts()).to.throw(Error);
+      expect(apps).to.deep.equal(trustedApps);
     });
   });
 });

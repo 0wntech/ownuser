@@ -12,7 +12,7 @@ module.exports.getApps = function(graph) {
   } else {
     const graph = this.graph;
     const fetcher = this.fetcher;
-    return fetcher.load(this.webId, { force: true }).then(res => {
+    return fetcher.load(this.webId, { force: true, clearPreviousData: true }).then(() => {
       const apps = graph
         .each(rdf.sym(this.webId), ns.acl("trustedApp"))
         .map(app => {
@@ -26,23 +26,11 @@ module.exports.getApps = function(graph) {
 module.exports.setApps = function(newApps) {
   if (newApps) {
     const graph = this.graph;
-    return this.fetcher.load(this.webId, { force: true }).then((res) => {
-      const del = [];
-      const appsToDel = graph
-        .each(rdf.sym(this.webId), ns.acl("trustedApp"))
-        .forEach(app => {
-          graph.statementsMatching(app).forEach(dels => {
-            del.push(dels);
-          });
-          del.push(
-            rdf.st(
-              rdf.sym(this.webId),
-              ns.acl("trustedApp"),
-              app,
-              rdf.sym(this.webId).doc()
-            )
-          );
-        });
+    return this.fetcher.load(this.webId, { force: true, clearPreviousData: true }).then(() => {
+      const del = graph
+        .statementsMatching(rdf.sym(this.webId), ns.acl("trustedApp"))
+        .concat(graph.statementsMatching(null, ns.acl("origin")))
+        .concat(graph.statementsMatching(null, ns.acl("mode")));
 
       const ins = [];
       newApps.forEach(app => {
