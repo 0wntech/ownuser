@@ -31,6 +31,14 @@ describe("Emails", function() {
       let emails = await user.getEmails();
       expect(emails).to.deep.equal([newEmail]);
     });
+    
+    it("should modify multiple email fields", async function() {
+      const newEmails = ["lalasepp1@gmail.com", "lalasepp123@gmail.com"];
+      await user.setEmails(newEmails);
+      
+      let emails = await user.getEmails();
+      expect(emails).to.deep.equal(newEmails);
+    });
 
     it("shouldn't modify the email field without specifying an email to set", async function() {
       expect(() => user.setEmails()).to.throw(Error);

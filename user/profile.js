@@ -35,7 +35,7 @@ module.exports.getProfile = function(webId) {
 
 module.exports.setProfile = function(profile) {
   return new Promise((resolve, reject) => {
-    this.getProfile().then(oldProfile => {
+    return this.getProfile().then(async oldProfile => {
       const { name, job, picture, bio, emails, telephones } = profile;
       const del = [];
       const ins = [];
@@ -122,55 +122,15 @@ module.exports.setProfile = function(profile) {
         if (!Array.isArray(emails)) {
           emails = [emails];
         }
-        oldProfile.emails.forEach(email => {
-          const emailBlankId = this.graph.any(
-            null,
-            ns.vcard("value"),
-            rdf.sym("mailto:" + email)
-          );
-          del.push(
-            rdf.st(
-              rdf.sym(this.webId),
-              ns.vcard("hasEmail"),
-              emailBlankId,
-              rdf.sym(this.webId).doc()
-            )
-          );
-          del.push(
-            rdf.st(
-              emailBlankId,
-              ns.vcard("value"),
-              rdf.sym("mailto:" + email),
-              rdf.sym(this.webId).doc()
-            )
-          );
-        });
-
-        emails.forEach(email => {
-          const bN = rdf.sym(
-            rdf.sym(this.webId).doc().uri +
-              "#" +
-              "id" +
-              ("" + new Date().getTime())
-          );
-          ins.push(
-            rdf.st(
-              rdf.sym(this.webId),
-              ns.vcard("hasEmail"),
-              bN,
-              rdf.sym(this.webId).doc()
-            )
-          );
-
-          ins.push(
-            rdf.st(
-              bN,
-              ns.vcard("value"),
-              rdf.sym("mailto:" + email),
-              rdf.sym(this.webId).doc()
-            )
-          );
-        });
+        const { insertStatements, deleteStatements } = await this.setEmails(
+          emails,
+          {
+            oldEmails: oldProfile.emails,
+            noUpdate: true
+          }
+        );
+        if (insertStatements) insertStatements.forEach(st => ins.push(st));
+        if (deleteStatements) deleteStatements.forEach(st => del.push(st));
       }
 
       if (
@@ -180,54 +140,15 @@ module.exports.setProfile = function(profile) {
         if (!Array.isArray(telephones)) {
           telephones = [telephones];
         }
-        oldProfile.telephones.forEach(telephone => {
-          const telephoneBlankId = this.graph.any(
-            null,
-            ns.vcard("value"),
-            rdf.sym("tel:" + telephone)
-          );
-          del.push(
-            rdf.st(
-              rdf.sym(this.webId),
-              ns.vcard("hasTelephone"),
-              telephoneBlankId,
-              rdf.sym(this.webId).doc()
-            )
-          );
-          del.push(
-            rdf.st(
-              telephoneBlankId,
-              ns.vcard("value"),
-              rdf.sym("tel:" + telephone),
-              rdf.sym(this.webId).doc()
-            )
-          );
-        });
-
-        telephones.forEach(telephone => {
-          const bN = rdf.sym(
-            rdf.sym(this.webId).doc().uri +
-              "#" +
-              "id" +
-              ("" + new Date().getTime())
-          );
-          ins.push(
-            rdf.st(
-              rdf.sym(this.webId),
-              ns.vcard("hasTelephone"),
-              bN,
-              rdf.sym(this.webId).doc()
-            )
-          );
-          ins.push(
-            rdf.st(
-              bN,
-              ns.vcard("value"),
-              rdf.sym("tel:" + telephone),
-              rdf.sym(this.webId).doc()
-            )
-          );
-        });
+        const { insertStatements, deleteStatements } = await this.setTelephones(
+          telephones,
+          {
+            oldTelephones: oldProfile.telephones,
+            noUpdate: true
+          }
+        );
+        if (insertStatements) insertStatements.forEach(st => ins.push(st));
+        if (deleteStatements) deleteStatements.forEach(st => del.push(st));
       }
 
       return this.updater

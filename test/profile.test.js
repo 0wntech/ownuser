@@ -1,5 +1,4 @@
 const expect = require("chai").expect;
-const should = require("chai").should();
 const auth = require("solid-auth-cli");
 const rdf = require("rdflib");
 
@@ -36,7 +35,7 @@ describe("Profile", function() {
   describe("getProfile()", function() {
     it("should fetch the right profile", function() {
       return user.getProfile().then(profile => {
-        profile.should.deep.equal(originalProfile);
+        expect(profile).to.deep.equal(originalProfile);
       });
     });
   });
@@ -45,11 +44,11 @@ describe("Profile", function() {
     this.timeout(5000);
     it("should modify the profile", function() {
       const newProfile = {
-        emails: ["blabla@gmail.com"]
+        emails: ["blabla@gmail.com", "blabla2@gmail.com"]
       };
       return user.setProfile(newProfile).then(() => {
         return user.getProfile().then(profile => {
-          profile.emails.should.deep.equal(newProfile.emails);
+          expect(profile.emails).to.deep.equal(newProfile.emails);
         });
       });
     });

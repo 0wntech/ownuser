@@ -7,7 +7,7 @@ module.exports.getTelephones = function(graph) {
       .each(rdf.sym(this.webId), ns.vcard("hasTelephone"))
       .map(telephoneBlankId => {
         return graph
-          .any(rdf.sym(telephoneBlankId), ns.vcard("value"))
+          .any(telephoneBlankId, ns.vcard("value"))
           .value.replace("tel:", "");
       });
     return telephones;
@@ -18,7 +18,7 @@ module.exports.getTelephones = function(graph) {
         .each(rdf.sym(this.webId), ns.vcard("hasTelephone"))
         .map(telephoneBlankId => {
           return this.graph
-            .any(rdf.sym(telephoneBlankId), ns.vcard("value"))
+            .any(telephoneBlankId, ns.vcard("value"))
             .value.replace("tel:", "");
         });
       return telephones;
@@ -26,84 +26,85 @@ module.exports.getTelephones = function(graph) {
   }
 };
 
-module.exports.setTelephones = function(telephones) {
+module.exports.setTelephones = function(
+  telephones,
+  options = { oldTelephones: null, noUpdate: null }
+) {
   if (telephones) {
     if (!Array.isArray(telephones)) {
       telephones = [telephones];
     }
-    return new Promise((resolve, reject) => {
-      this.getTelephones().then(oldTelephones => {
-        const del = [];
-        const ins = [];
+    return new Promise(async (resolve, reject) => {
+      const oldTelephones = !options.oldTelephones
+        ? await this.getTelephones()
+        : options.oldTelephones;
+      const del = [];
+      const ins = [];
 
-        toDelete = oldTelephones.filter(function(telephone) {
-          return !telephones.includes(telephone);
-        });
-        // console.log("DEBUG --- DELETE ", toDelete);
-        toDelete.forEach(telephone => {
-          telephone = rdf.sym("tel:" + telephone);
-          const telephoneBlankId = this.graph.any(
-            null,
-            ns.vcard("value"),
-            telephone
-          );
-
-          del.push(
-            rdf.st(
-              rdf.sym(this.webId),
-              ns.vcard("hasTelephone"),
-              telephoneBlankId,
-              rdf.sym(this.webId).doc()
-            )
-          );
-          del.push(
-            rdf.st(
-              rdf.sym(telephoneBlankId),
-              ns.vcard("value"),
-              telephone,
-              rdf.sym(this.webId).doc()
-            )
-          );
-        });
-
-        toAdd = telephones.filter(function(telephone) {
-          return !oldTelephones.includes(telephone);
-        });
-        toAdd.forEach(telephone => {
-          telephone = rdf.sym("tel:" + telephone);
-          const bN = rdf.sym(
-            rdf.sym(this.webId).doc().uri +
-              "#" +
-              "id" +
-              ("" + new Date().getTime())
-          );
-          ins.push(
-            rdf.st(
-              rdf.sym(this.webId),
-              ns.vcard("hasTelephone"),
-              bN,
-              rdf.sym(this.webId).doc()
-            )
-          );
-          ins.push(
-            rdf.st(
-              rdf.sym(bN),
-              ns.vcard("value"),
-              telephone,
-              rdf.sym(this.webId).doc()
-            )
-          );
-        });
-        // console.log("DEBUG --- ADD ", toAdd);
-        return this.updater
-          .update(del, ins)
-          .then(() => {
-            resolve();
-          })
-          .catch(err => {
-            reject(err);
-          });
+      toDelete = oldTelephones.filter(function(telephone) {
+        return !telephones.includes(telephone);
       });
+      // console.log("DEBUG --- DELETE ", toDelete);
+      toDelete.forEach(telephone => {
+        telephone = rdf.sym("tel:" + telephone);
+        const telephoneBlankId = this.graph.any(
+          null,
+          ns.vcard("value"),
+          telephone
+        );
+
+        del.push(
+          rdf.st(
+            rdf.sym(this.webId),
+            ns.vcard("hasTelephone"),
+            telephoneBlankId,
+            rdf.sym(this.webId).doc()
+          )
+        );
+        del.push(
+          rdf.st(
+            telephoneBlankId,
+            ns.vcard("value"),
+            telephone,
+            rdf.sym(this.webId).doc()
+          )
+        );
+      });
+
+      toAdd = telephones.filter(function(telephone) {
+        return !oldTelephones.includes(telephone);
+      });
+      toAdd.forEach(telephone => {
+        telephone = rdf.sym("tel:" + telephone);
+        const bN = new rdf.BlankNode();
+        ins.push(
+          rdf.st(
+            rdf.sym(this.webId),
+            ns.vcard("hasTelephone"),
+            bN,
+            rdf.sym(this.webId).doc()
+          )
+        );
+        ins.push(
+          rdf.st(
+            bN,
+            ns.vcard("value"),
+            telephone,
+            rdf.sym(this.webId).doc()
+          )
+        );
+      });
+      // console.log("DEBUG --- ADD ", toAdd);
+      return options.noUpdate
+        ? resolve({ deleteStatements: del, insertStatement: ins })
+        : this.updater
+            .update(del, ins)
+            .then(() => {
+              resolve();
+            })
+            .catch(err => {
+              reject(err);
+            });
     });
   } else {
     throw new Error("No telephones were specified");

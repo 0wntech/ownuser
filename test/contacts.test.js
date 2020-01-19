@@ -23,7 +23,7 @@ describe("Contacts", function() {
 
   describe("getContacts()", function() {
     it("should fetch the right contacts from the profile", async function() {
-      const contacts = await user.getContacts({ webIdsOnly: true });
+      const contacts = await user.getContacts();
       expect(contacts).to.deep.equal(config.contacts);
     });
   });
@@ -33,7 +33,7 @@ describe("Contacts", function() {
       const newContact = "https://ludwigschubi.solid.community/profile/card#me";
 
       await user.setContacts(newContact);
-      let contacts = await user.getContacts({ webIdsOnly: true });
+      let contacts = await user.getContacts();
       expect(contacts).to.deep.equal([newContact]);
     });
 
