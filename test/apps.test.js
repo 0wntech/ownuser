@@ -11,7 +11,7 @@ describe("Apps", function() {
   user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
 
   before("Setting up auth...", async function() {
-    this.timeout(4000);
+    this.timeout(5000);
     const credentials = await auth.getCredentials();
     await auth.login(credentials);
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });

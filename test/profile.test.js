@@ -44,11 +44,13 @@ describe("Profile", function() {
     this.timeout(5000);
     it("should modify the profile", function() {
       const newProfile = {
-        emails: ["blabla@gmail.com", "blabla2@gmail.com"]
+        emails: ["blabla@gmail.com", "blabla2@gmail.com"],
+        telephones: ["017654321567", "017654321569"]
       };
       return user.setProfile(newProfile).then(() => {
         return user.getProfile().then(profile => {
           expect(profile.emails).to.deep.equal(newProfile.emails);
+          expect(profile.telephones).to.deep.equal(newProfile.telephones);
         });
       });
     });

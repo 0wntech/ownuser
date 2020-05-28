@@ -147,6 +147,7 @@ module.exports.setProfile = function(profile) {
             noUpdate: true
           }
         );
+        console.log(insertStatements, deleteStatements, telephones)
         if (insertStatements) insertStatements.forEach(st => ins.push(st));
         if (deleteStatements) deleteStatements.forEach(st => del.push(st));
       }

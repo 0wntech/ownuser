@@ -86,17 +86,11 @@ module.exports.setTelephones = function(
           )
         );
         ins.push(
-          rdf.st(
-            bN,
-            ns.vcard("value"),
-            telephone,
-            rdf.sym(this.webId).doc()
-          )
+          rdf.st(bN, ns.vcard("value"), telephone, rdf.sym(this.webId).doc())
         );
       });
-      // console.log("DEBUG --- ADD ", toAdd);
       return options.noUpdate
-        ? resolve({ deleteStatements: del, insertStatement: ins })
+        ? resolve({ deleteStatements: del, insertStatements: ins })
         : this.updater
             .update(del, ins)
             .then(() => {

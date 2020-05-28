@@ -40,6 +40,15 @@ describe("telephones", function() {
         });
       });
     });
+    
+    it("should modify the specified Telephone field with multiple numbers", function() {
+      const newTelephones = ["012433494444", "012433494443"];
+      return user.setTelephones(newTelephones).then(() => {
+        return user.getTelephones().then(telephones => {
+          telephones.should.deep.equal(newTelephones);
+        });
+      });
+    });
 
     it("shouldn't modify the Telephone field without specifying a telephone number to set", function() {
       expect(() => user.setTelephones()).to.throw(Error);
