@@ -36,7 +36,7 @@ module.exports.getProfile = function(webId) {
 module.exports.setProfile = function(profile) {
   return new Promise((resolve, reject) => {
     return this.getProfile().then(async oldProfile => {
-      const { name, job, picture, bio, emails, telephones } = profile;
+      let { name, job, picture, bio, emails, telephones } = profile;
       const del = [];
       const ins = [];
       if (name && name !== oldProfile.name) {
