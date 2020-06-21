@@ -54,5 +54,18 @@ describe("Profile", function() {
         });
       });
     });
+    
+    it("should delete values from profile if not specified", function() {
+      const newProfile = {
+        emails: undefined,
+        telephones: undefined
+      };
+      return user.setProfile(newProfile).then(() => {
+        return user.getProfile().then(profile => {
+          expect(profile.emails).to.deep.equal([]);
+          expect(profile.telephones).to.deep.equal([]);
+        });
+      });
+    });
   });
 });

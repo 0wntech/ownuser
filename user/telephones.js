@@ -41,8 +41,6 @@ module.exports.setTelephones = function (
     const del = [];
     const ins = [];
 
-    console.log(oldTelephones, telephones);
-
     toDelete = oldTelephones.filter(function (telephone) {
       return !telephones.includes(telephone);
     });
