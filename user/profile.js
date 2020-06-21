@@ -1,7 +1,7 @@
 const rdf = require("rdflib");
 const ns = require("solid-namespace")(rdf);
 
-module.exports.getProfile = function(webId) {
+module.exports.getProfile = function (webId) {
   let store;
   let fetcher;
   if (webId) {
@@ -28,14 +28,14 @@ module.exports.getProfile = function(webId) {
       emails: emails,
       job: jobValue,
       bio: bioValue,
-      telephones: telephones
+      telephones: telephones,
     };
   });
 };
 
-module.exports.setProfile = function(profile) {
+module.exports.setProfile = function (profile) {
   return new Promise((resolve, reject) => {
-    return this.getProfile().then(async oldProfile => {
+    return this.getProfile().then(async (oldProfile) => {
       let { name, job, picture, bio, emails, telephones } = profile;
       const del = [];
       const ins = [];
@@ -44,7 +44,7 @@ module.exports.setProfile = function(profile) {
           rdf.sym(this.webId),
           ns.foaf("name")
         );
-        delSt.forEach(st => {
+        delSt.forEach((st) => {
           del.push(st);
         });
 
@@ -63,7 +63,7 @@ module.exports.setProfile = function(profile) {
           rdf.sym(this.webId),
           ns.vcard("role")
         );
-        delSt.forEach(st => {
+        delSt.forEach((st) => {
           del.push(st);
         });
 
@@ -82,7 +82,7 @@ module.exports.setProfile = function(profile) {
           rdf.sym(this.webId),
           ns.vcard("hasPhoto")
         );
-        delSt.forEach(st => {
+        delSt.forEach((st) => {
           del.push(st);
         });
 
@@ -101,7 +101,7 @@ module.exports.setProfile = function(profile) {
           rdf.sym(this.webId),
           ns.vcard("note")
         );
-        delSt.forEach(st => {
+        delSt.forEach((st) => {
           del.push(st);
         });
 
@@ -115,10 +115,8 @@ module.exports.setProfile = function(profile) {
         );
       }
 
-      if (
-        emails &&
-        JSON.stringify(emails) !== JSON.stringify(oldProfile.emails)
-      ) {
+      if (JSON.stringify(emails) !== JSON.stringify(oldProfile.emails)) {
+        if (!emails) emails = [];
         if (!Array.isArray(emails)) {
           emails = [emails];
         }
@@ -126,17 +124,17 @@ module.exports.setProfile = function(profile) {
           emails,
           {
             oldEmails: oldProfile.emails,
-            noUpdate: true
+            noUpdate: true,
           }
         );
-        if (insertStatements) insertStatements.forEach(st => ins.push(st));
-        if (deleteStatements) deleteStatements.forEach(st => del.push(st));
+        if (insertStatements) insertStatements.forEach((st) => ins.push(st));
+        if (deleteStatements) deleteStatements.forEach((st) => del.push(st));
       }
 
       if (
-        telephones &&
         JSON.stringify(telephones) !== JSON.stringify(oldProfile.telephones)
       ) {
+        if (!telephones) telephones = [];
         if (!Array.isArray(telephones)) {
           telephones = [telephones];
         }
@@ -144,12 +142,12 @@ module.exports.setProfile = function(profile) {
           telephones,
           {
             oldTelephones: oldProfile.telephones,
-            noUpdate: true
+            noUpdate: true,
           }
         );
-        console.log(insertStatements, deleteStatements, telephones)
-        if (insertStatements) insertStatements.forEach(st => ins.push(st));
-        if (deleteStatements) deleteStatements.forEach(st => del.push(st));
+        console.log(insertStatements, deleteStatements, telephones);
+        if (insertStatements) insertStatements.forEach((st) => ins.push(st));
+        if (deleteStatements) deleteStatements.forEach((st) => del.push(st));
       }
 
       return this.updater
@@ -157,7 +155,7 @@ module.exports.setProfile = function(profile) {
         .then(() => {
           resolve();
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err);
         });
     });
