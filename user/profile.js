@@ -13,24 +13,26 @@ module.exports.getProfile = function (webId) {
     webId = this.webId;
   }
 
-  return fetcher.load(webId).then(() => {
-    const nameValue = this.getName(store);
-    const emails = this.getEmails(store);
-    const jobValue = this.getJob(store);
-    const pictureValue = this.getPicture(store);
-    const bioValue = this.getBio(store);
-    const telephones = this.getTelephones(store);
+  return fetcher
+    .load(webId, { force: true, clearPreviousData: true })
+    .then(() => {
+      const nameValue = this.getName(store);
+      const emails = this.getEmails(store);
+      const jobValue = this.getJob(store);
+      const pictureValue = this.getPicture(store);
+      const bioValue = this.getBio(store);
+      const telephones = this.getTelephones(store);
 
-    return {
-      webId: webId,
-      name: nameValue,
-      picture: pictureValue,
-      emails: emails,
-      job: jobValue,
-      bio: bioValue,
-      telephones: telephones,
-    };
-  });
+      return {
+        webId: webId,
+        name: nameValue,
+        picture: pictureValue,
+        emails: emails,
+        job: jobValue,
+        bio: bioValue,
+        telephones: telephones,
+      };
+    });
 };
 
 module.exports.setProfile = function (profile) {

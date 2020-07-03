@@ -8,6 +8,7 @@ const config = require("./userConfig.json");
 const user = new User(config.webId);
 
 describe("Job", function() {
+  this.timeout(4000);
   user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
 
   before("Setting up auth...", async function() {

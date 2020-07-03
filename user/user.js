@@ -62,7 +62,7 @@ function User(webId) {
 
     const friendsName = friendsWebId.split(".")[0].replace("https://", "");
     return fetcher
-      .load(userInboxAddress + friendsName)
+      .load(userInboxAddress + friendsName, { force: true, clearPreviousData: true })
       .then(response => {
         const userInbox = rdf.sym(userInboxAddress + friendsName);
         const ownMessages = store
@@ -100,7 +100,7 @@ function User(webId) {
     );
 
     return fetcher
-      .load(friendsInboxAddress)
+      .load(friendsInboxAddress, { force: true, clearPreviousData: true })
       .then(response => {
         const friendMessages = store
           .each(rdf.sym(friendsInboxAddress), ns.wf("message"))

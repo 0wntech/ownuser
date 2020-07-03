@@ -1,25 +1,24 @@
 const rdf = require("rdflib");
 const ns = require("solid-namespace")(rdf);
-const User = require("../index");
 const sparql = require("sparql-fiddle");
 
-module.exports.getContacts = async function(options = {}) {
+module.exports.getContacts = async function (options = {}) {
   const webId = this.webId;
 
   if (!options.store) {
     const fetcher = this.fetcher;
     store = this.graph;
-    await fetcher.load(webId);
+    await fetcher.load(webId, { force: true, clearPreviousData: true });
   }
 
   const ownNode = rdf.sym(webId);
-  const contacts = store.each(ownNode, ns.foaf("knows")).map(contact => {
+  const contacts = store.each(ownNode, ns.foaf("knows")).map((contact) => {
     return contact.value;
   });
   return contacts;
 };
 
-module.exports.setContacts = function(contacts) {
+module.exports.setContacts = function (contacts) {
   if (!contacts) {
     throw new Error("Please specify the contacts you want to set.");
   } else if (!Array.isArray(contacts)) {
@@ -27,22 +26,21 @@ module.exports.setContacts = function(contacts) {
   }
   const webId = this.webId;
   const updater = this.updater;
-  const store = this.graph;
-  return this.getContacts({ webIdsOnly: true }).then(prevContacts => {
+  return this.getContacts({ webIdsOnly: true }).then((prevContacts) => {
     const toDelete = prevContacts
-      .filter(contact => {
+      .filter((contact) => {
         return !contacts.includes(contact);
       })
-      .map(contact => {
+      .map((contact) => {
         const ownNode = rdf.sym(webId);
         const contactNode = rdf.sym(contact);
         return rdf.st(ownNode, ns.foaf("knows"), contactNode, ownNode.doc());
       });
     const toAdd = contacts
-      .filter(contact => {
+      .filter((contact) => {
         return !prevContacts.includes(contact);
       })
-      .map(contact => {
+      .map((contact) => {
         const ownNode = rdf.sym(webId);
         const contactNode = rdf.sym(contact);
         return rdf.st(ownNode, ns.foaf("knows"), contactNode, ownNode.doc());
@@ -55,7 +53,7 @@ module.exports.setContacts = function(contacts) {
   });
 };
 
-module.exports.addContact = function(contactWebId) {
+module.exports.addContact = function (contactWebId) {
   const webId = this.webId;
   const updater = this.updater;
 
@@ -69,7 +67,7 @@ module.exports.addContact = function(contactWebId) {
   return updater.update(del, ins);
 };
 
-module.exports.deleteContact = function(contactWebId) {
+module.exports.deleteContact = function (contactWebId) {
   const webId = this.webId;
   const updater = this.updater;
 
@@ -83,31 +81,31 @@ module.exports.deleteContact = function(contactWebId) {
   return updater.update(del, ins);
 };
 
-module.exports.getContactRecommendations = function() {
+module.exports.getContactRecommendations = function () {
   return new Promise((resolve, reject) => {
     const query =
       "PREFIX n: <http://xmlns.com/foaf/0.1/> SELECT ?o WHERE {?s n:knows ?o.}";
     let friendsOfFriends = [];
     let myFriends = [];
-    runQuery(this.webId, query).then(results => {
-      const fofPromises = results.map(friend => {
+    runQuery(this.webId, query).then((results) => {
+      const fofPromises = results.map((friend) => {
         myFriends.push(friend.o);
         return runQuery(friend.o, query);
       });
       Promise.all(fofPromises)
-        .then(res => {
-          res.forEach(friends => {
-            friends.forEach(friend => {
+        .then((res) => {
+          res.forEach((friends) => {
+            friends.forEach((friend) => {
               friendsOfFriends.push(friend.o);
             });
           });
           return friendsOfFriends;
         })
-        .then(friends => {
+        .then((friends) => {
           myFriends.push(this.webId);
           return removeFriendsInCommon(friends, myFriends);
         })
-        .then(friends => {
+        .then((friends) => {
           resolve(rankFriendsInCommon(friends));
         });
     });
@@ -115,14 +113,14 @@ module.exports.getContactRecommendations = function() {
 };
 
 function removeFriendsInCommon(friendsOfFriends, myFriends) {
-  return friendsOfFriends.filter(friend => {
+  return friendsOfFriends.filter((friend) => {
     return myFriends.indexOf(friend) == -1 ? true : false;
   });
 }
 
 function rankFriendsInCommon(friendsOfFriendArray) {
   let counts = {};
-  friendsOfFriendArray.forEach(friend => {
+  friendsOfFriendArray.forEach((friend) => {
     counts[friend] = (counts[friend] || 1) + 1;
   });
   let sortable = [];
@@ -142,7 +140,7 @@ function runQuery(endpoint, query) {
   const fiddle = {
     data: endpoint,
     query: query,
-    wanted: "Array"
+    wanted: "Array",
   };
   return sparql.run(fiddle);
 }

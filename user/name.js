@@ -8,7 +8,7 @@ module.exports.getName = function(graph) {
     return nameValue;
   } else {
     const fetcher = this.fetcher;
-    return fetcher.load(this.webId).then(() => {
+    return fetcher.load(this.webId, { force: true, clearPreviousData: true }).then(() => {
       const name = this.graph.any(rdf.sym(this.webId), ns.foaf("name"));
       const nameValue = name ? name.value : undefined;
       return nameValue;

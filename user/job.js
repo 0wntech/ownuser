@@ -8,7 +8,7 @@ module.exports.getJob = function(graph) {
     return jobValue;
   } else {
     const fetcher = this.fetcher;
-    return fetcher.load(this.webId).then(() => {
+    return fetcher.load(this.webId, { force: true, clearPreviousData: true }).then(() => {
       const job = this.graph.any(rdf.sym(this.webId), ns.vcard("role"));
       const jobValue = job ? job.value : "";
       return jobValue;

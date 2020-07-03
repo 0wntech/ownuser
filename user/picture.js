@@ -8,7 +8,7 @@ module.exports.getPicture = function(graph) {
     return pictureValue;
   } else {
     const fetcher = this.fetcher;
-    return fetcher.load(this.webId).then(() => {
+    return fetcher.load(this.webId, { force: true, clearPreviousData: true }).then(() => {
       const picture = this.graph.any(rdf.sym(this.webId), ns.vcard("hasPhoto"));
       const pictureValue = picture ? picture.value : "";
       return pictureValue;

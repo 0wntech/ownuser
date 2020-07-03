@@ -1,11 +1,14 @@
 {
   "webId": "https://lalasepp1.solid.community/profile/card#me",
-  "name": "Tester",
+  "name": "Lala Sepp",
   "picture": "https://lalasepp1.solid.community/profile/icon.ico_.ico",
   "job": "Hacker",
   "bio": "Hacking",
   "emails": ["lalasepp@gmail.com"],
   "telephones": ["03055493333"],
-  "contacts": ["https://bejow.owntech.de/profile/card#me", "https://ludwig.owntech.de/profile/card#me"],
-  "trustedApps": ["http://localhost:3000"]
+  "contacts": [
+    "https://bejow.owntech.de/profile/card#me",
+    "https://ludwig.owntech.de/profile/card#me"
+  ],
+  "trustedApps": ["http://localhost:3001"]
 }

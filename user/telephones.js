@@ -13,7 +13,7 @@ module.exports.getTelephones = function (graph) {
     return telephones;
   } else {
     const fetcher = this.fetcher;
-    return fetcher.load(this.webId).then(() => {
+    return fetcher.load(this.webId, { force: true, clearPreviousData: true }).then(() => {
       const telephones = this.graph
         .each(rdf.sym(this.webId), ns.vcard("hasTelephone"))
         .map((telephoneBlankId) => {

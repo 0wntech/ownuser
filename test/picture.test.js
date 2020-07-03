@@ -27,7 +27,7 @@ describe("Picture", function() {
   });
 
   describe("setPicture()", function() {
-
+    this.timeout(4000);
     it("should modify the picture field", async function() {
       const newPicture = "https://owntech.de/favicon.ico";
 

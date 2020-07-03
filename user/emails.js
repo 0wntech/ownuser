@@ -13,16 +13,18 @@ module.exports.getEmails = function (graph) {
     return emails;
   } else {
     const fetcher = this.fetcher;
-    return fetcher.load(this.webId).then(() => {
-      const emails = this.graph
-        .each(rdf.sym(this.webId), ns.vcard("hasEmail"))
-        .map((emailBlankId) => {
-          return this.graph
-            .any(emailBlankId, ns.vcard("value"))
-            .value.replace("mailto:", "");
-        });
-      return emails;
-    });
+    return fetcher
+      .load(this.webId, { force: true, clearPreviousData: true })
+      .then(() => {
+        const emails = this.graph
+          .each(rdf.sym(this.webId), ns.vcard("hasEmail"))
+          .map((emailBlankId) => {
+            return this.graph
+              .any(emailBlankId, ns.vcard("value"))
+              .value.replace("mailto:", "");
+          });
+        return emails;
+      });
   }
 };
 
