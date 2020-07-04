@@ -37,10 +37,10 @@ describe("Bio", function() {
       expect(bio).to.equal(newBio);
     });
 
-    it("shouldn't modify the bio field", async function() {
+    it("should delete the bio field", async function() {
       await user.setBio();
       let bio = await user.getBio();
-      expect(bio).to.equal(config.bio);
+      expect(bio).to.equal(undefined);
     });
   });
 });

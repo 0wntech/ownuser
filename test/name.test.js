@@ -37,10 +37,10 @@ describe("Name", function () {
       expect(name).to.equal(newName);
     });
 
-    it("shouldn't modify the name field", async function () {
+    it("should delete the name field", async function () {
       await user.setName();
       let name = await user.getName();
-      expect(name).to.equal(config.name);
+      expect(name).to.equal(undefined);
     });
   });
 });

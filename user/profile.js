@@ -41,7 +41,7 @@ module.exports.setProfile = function (profile) {
       let { name, job, picture, bio, emails, telephones } = profile;
       const del = [];
       const ins = [];
-      if (name && name !== oldProfile.name) {
+      if (name !== oldProfile.name) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.foaf("name")
@@ -50,17 +50,18 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.foaf("name"),
-            rdf.lit(name),
-            rdf.sym(this.webId).doc()
-          )
-        );
+        if (name)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.foaf("name"),
+              rdf.lit(name),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
-      if (job && job !== oldProfile.job) {
+      if (job !== oldProfile.job) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("role")
@@ -69,17 +70,18 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("role"),
-            rdf.lit(job),
-            rdf.sym(this.webId).doc()
-          )
-        );
+        if (job)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("role"),
+              rdf.lit(job),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
-      if (picture && picture !== oldProfile.picture) {
+      if (picture !== oldProfile.picture) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("hasPhoto")
@@ -88,17 +90,18 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("hasPhoto"),
-            rdf.lit(picture),
-            rdf.sym(this.webId).doc()
-          )
-        );
+        if (picture)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("hasPhoto"),
+              rdf.lit(picture),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
-      if (bio && bio !== oldProfile.bio) {
+      if (bio !== oldProfile.bio) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("note")
@@ -107,14 +110,15 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("note"),
-            rdf.lit(bio),
-            rdf.sym(this.webId).doc()
-          )
-        );
+        if (bio)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("note"),
+              rdf.lit(bio),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
       if (JSON.stringify(emails) !== JSON.stringify(oldProfile.emails)) {

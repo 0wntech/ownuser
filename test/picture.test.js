@@ -36,10 +36,10 @@ describe("Picture", function() {
       expect(picture).to.equal(newPicture);
     });
 
-    it("shouldn't modify the picture field", async function() {
+    it("should delete the picture field", async function() {
       await user.setPicture();
       let picture = await user.getPicture();
-      expect(picture).to.equal(config.picture);
+      expect(picture).to.equal(undefined);
     });
   });
 });

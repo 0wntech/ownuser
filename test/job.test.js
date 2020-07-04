@@ -37,10 +37,10 @@ describe("Job", function() {
       expect(job).to.equal(newJob);
     });
 
-    it("shouldn't modify the job field", async function() {
+    it("should delete the job field", async function() {
       await user.setJob();
       let job = await user.getJob();
-      expect(job).to.equal(config.job);
+      expect(job).to.equal(undefined);
     });
   });
 });
