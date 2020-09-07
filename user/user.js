@@ -5,6 +5,7 @@ const utils = require("../utils.js");
 const { getName, setName } = require("./name.js");
 const { getBio, setBio } = require("./bio.js");
 const { getJob, setJob } = require("./job.js");
+const { getStorage, setStorage } = require("./storage.js");
 const { getPicture, setPicture } = require("./picture.js");
 const { getTelephones, setTelephones } = require("./telephones.js");
 const { getEmails, setEmails } = require("./emails.js");
@@ -15,7 +16,7 @@ const {
   setContacts,
   addContact,
   deleteContact,
-  getContactRecommendations
+  getContactRecommendations,
 } = require("./contacts.js");
 
 function User(webId) {
@@ -29,6 +30,9 @@ function User(webId) {
 
   this.getJob = getJob.bind(this);
   this.setJob = setJob.bind(this);
+
+  this.getStorage = getStorage.bind(this);
+  this.setStorage = setStorage.bind(this);
 
   this.getBio = getBio.bind(this);
   this.setBio = setBio.bind(this);
@@ -54,7 +58,7 @@ function User(webId) {
   this.deleteContact = deleteContact.bind(this);
   this.getContactRecommendations = getContactRecommendations.bind(this);
 
-  this.getMessagesWith = function(friendsWebId) {
+  this.getMessagesWith = function (friendsWebId) {
     const store = rdf.graph();
     const fetcher = new rdf.Fetcher(store);
     const username = this.webId.split(".")[0].replace("https://", "");
@@ -62,12 +66,15 @@ function User(webId) {
 
     const friendsName = friendsWebId.split(".")[0].replace("https://", "");
     return fetcher
-      .load(userInboxAddress + friendsName, { force: true, clearPreviousData: true })
-      .then(response => {
+      .load(userInboxAddress + friendsName, {
+        force: true,
+        clearPreviousData: true,
+      })
+      .then((response) => {
         const userInbox = rdf.sym(userInboxAddress + friendsName);
         const ownMessages = store
           .each(userInbox, ns.wf("message"))
-          .map(message => {
+          .map((message) => {
             message = rdf.sym(message);
             const messageContent = store.any(message, ns.sioc("content"));
             const messageTimestamp = store.any(message, ns.dc("created"));
@@ -80,17 +87,17 @@ function User(webId) {
               : altMessageTimestamp.value;
             return {
               content: messageContentValue,
-              created: messageTimestampValue
+              created: messageTimestampValue,
             };
           });
         return ownMessages;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("You haven't send any messages yet!");
       });
   };
 
-  this.getMessagesFrom = function(friendsWebId) {
+  this.getMessagesFrom = function (friendsWebId) {
     const store = rdf.graph();
     const fetcher = new rdf.Fetcher(store);
     const username = this.webId.split(".")[0].replace("https://", "");
@@ -101,10 +108,10 @@ function User(webId) {
 
     return fetcher
       .load(friendsInboxAddress, { force: true, clearPreviousData: true })
-      .then(response => {
+      .then((response) => {
         const friendMessages = store
           .each(rdf.sym(friendsInboxAddress), ns.wf("message"))
-          .map(message => {
+          .map((message) => {
             message = rdf.sym(message.value);
             const messageContent = store.any(message, ns.sioc("content"));
             const messageTimestamp = store.any(message, ns.dc("created"));
@@ -117,20 +124,20 @@ function User(webId) {
               : altMessageTimestamp.value;
             return {
               content: messageContentValue,
-              created: messageTimestampValue
+              created: messageTimestampValue,
             };
           });
         return friendMessages;
       })
-      .catch(err => {
+      .catch((err) => {
         //console.log("This friend has no chat with you yet.");
       });
   };
 
-  this.getChatWith = function(friendsWebId) {
-    return this.getMessagesWith(friendsWebId).then(ownMessages => {
+  this.getChatWith = function (friendsWebId) {
+    return this.getMessagesWith(friendsWebId).then((ownMessages) => {
       return Promise.resolve(
-        this.getMessagesFrom(friendsWebId).then(friendMessages => {
+        this.getMessagesFrom(friendsWebId).then((friendMessages) => {
           var chat = {};
           chat[friendsWebId] = utils.sortMessages(ownMessages, friendMessages);
           return chat;
