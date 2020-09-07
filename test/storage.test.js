@@ -7,7 +7,7 @@ const config = require("./userConfig.json");
 
 const user = new User(config.webId);
 
-describe.only("Storage", function () {
+describe("Storage", function () {
   this.timeout(4000);
 
   before("Setting up auth...", async function () {

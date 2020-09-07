@@ -19,9 +19,8 @@ module.exports.getApps = function (graph) {
           .each(rdf.sym(this.webId), ns.acl("trustedApp"))
           .map((app) => {
             const appUri = graph.any(app, ns.acl("origin")).value;
-            console.log(appUri)
             return appUri
-          });
+          }).filter((app) => app !== "http://example.org");
         return apps;
       });
   }

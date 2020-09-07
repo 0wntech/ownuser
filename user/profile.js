@@ -22,6 +22,7 @@ module.exports.getProfile = function (webId) {
       const pictureValue = this.getPicture(store);
       const bioValue = this.getBio(store);
       const telephones = this.getTelephones(store);
+      const storage = this.getStorage(store);
 
       return {
         webId: webId,
@@ -31,6 +32,7 @@ module.exports.getProfile = function (webId) {
         job: jobValue,
         bio: bioValue,
         telephones: telephones,
+        storage: storage,
       };
     });
 };
@@ -38,7 +40,7 @@ module.exports.getProfile = function (webId) {
 module.exports.setProfile = function (profile) {
   return new Promise((resolve, reject) => {
     return this.getProfile().then(async (oldProfile) => {
-      let { name, job, picture, bio, emails, telephones } = profile;
+      let { name, job, picture, bio, emails, telephones, storage } = profile;
       const del = [];
       const ins = [];
       if (name !== oldProfile.name) {
@@ -76,6 +78,26 @@ module.exports.setProfile = function (profile) {
               rdf.sym(this.webId),
               ns.vcard("role"),
               rdf.lit(job),
+              rdf.sym(this.webId).doc()
+            )
+          );
+      }
+      
+      if (storage !== oldProfile.storage) {
+        const delSt = this.graph.statementsMatching(
+          rdf.sym(this.webId),
+          ns.vcard("role")
+        );
+        delSt.forEach((st) => {
+          del.push(st);
+        });
+
+        if (storage)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("role"),
+              rdf.sym(storage),
               rdf.sym(this.webId).doc()
             )
           );
@@ -151,7 +173,6 @@ module.exports.setProfile = function (profile) {
             noUpdate: true,
           }
         );
-        console.log(insertStatements, deleteStatements, telephones);
         if (insertStatements) insertStatements.forEach((st) => ins.push(st));
         if (deleteStatements) deleteStatements.forEach((st) => del.push(st));
       }

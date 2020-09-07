@@ -12,6 +12,7 @@ const originalProfile = {
   picture: config.picture,
   emails: config.emails,
   telephones: config.telephones,
+  storage: config.storage,
 };
 
 const user = new User(config.webId);
