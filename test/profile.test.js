@@ -12,7 +12,7 @@ const originalProfile = {
   picture: config.picture,
   emails: config.emails,
   telephones: config.telephones,
-  contacts: config.contacts
+  contacts: config.contacts,
   storage: config.storage,
 };
 
