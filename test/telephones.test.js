@@ -9,8 +9,8 @@ const config = require("./userConfig.json");
 const user = new User(config.webId);
 
 describe("telephones", function () {
+  this.timeout(5000);
   before("Setting up auth...", function () {
-    this.timeout(10000);
     return auth.getCredentials().then((credentials) => {
       return auth.login(credentials).then(() => {
         user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
@@ -42,7 +42,7 @@ describe("telephones", function () {
     });
 
     it("should modify the specified Telephone field with multiple numbers", function () {
-      const newTelephones = ["012433494444", "012433494443"];
+      const newTelephones = ["012433494443", "012433494444"];
       return user.setTelephones(newTelephones).then(() => {
         return user.getTelephones().then((telephones) => {
           telephones.should.deep.equal(newTelephones);

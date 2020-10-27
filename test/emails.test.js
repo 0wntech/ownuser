@@ -24,6 +24,7 @@ describe("Emails", function () {
   });
 
   describe("setEmails()", function () {
+    this.timeout(4000);
     it("should modify the specified email field", async function () {
       const newEmail = "lalasepp1@gmail.com";
       await user.setEmails(newEmail);
@@ -33,7 +34,7 @@ describe("Emails", function () {
     });
 
     it("should modify multiple email fields", async function () {
-      const newEmails = ["lalasepp1@gmail.com", "lalasepp123@gmail.com"];
+      const newEmails = ["lalasepp123@gmail.com", "lalasepp1@gmail.com"];
       await user.setEmails(newEmails);
 
       let emails = await user.getEmails();

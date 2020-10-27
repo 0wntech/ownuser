@@ -1,7 +1,8 @@
 {
-  "webId": "https://lalatest.solidcommunity.net/profile/card#me",
-  "name": "Tester",
-  "picture": "https://lalatest.solidcommunity.net/profile/icon.ico_.ico",
+  "webId": "https://lalasepp1.solid.community/profile/card#me",
+  "storage": "https://lalasepp1.solid.community/",
+  "name": "Lala Sepp",
+  "picture": "https://lalasepp1.solid.community/profile/icon.ico_.ico",
   "job": "Hacker",
   "bio": "Hacking",
   "emails": ["lalasepp@gmail.com"],
@@ -10,5 +11,5 @@
     "https://bejow.owntech.de/profile/card#me",
     "https://ludwig.owntech.de/profile/card#me"
   ],
-  "trustedApps": ["http://localhost:3000"]
+  "trustedApps": ["http://localhost:3001"]
 }

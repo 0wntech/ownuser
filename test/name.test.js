@@ -7,39 +7,40 @@ const config = require("./userConfig.json");
 
 const user = new User(config.webId);
 
-describe("Name", function() {
+describe("Name", function () {
+  this.timeout(4000);
   user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
 
-  before("Setting up auth...", async function() {
+  before("Setting up auth...", async function () {
     const credentials = await auth.getCredentials();
     await auth.login(credentials);
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
   });
 
-  afterEach("Resetting name...", async function() {
+  afterEach("Resetting name...", async function () {
     await user.setName(config.name);
   });
 
-  describe("getName()", function() {
-    it("should fetch the right name from the profile", async function() {
+  describe("getName()", function () {
+    it("should fetch the right name from the profile", async function () {
       const name = await user.getName();
       expect(name).to.equal(config.name);
     });
   });
 
-  describe("setName()", function() {
-    it("should modify the name field", async function() {
+  describe("setName()", function () {
+    it("should modify the name field", async function () {
       const newName = "Lalasepp";
-      
+
       await user.setName(newName);
       let name = await user.getName();
       expect(name).to.equal(newName);
     });
 
-    it("shouldn't modify the name field", async function() {
+    it("should delete the name field", async function () {
       await user.setName();
       let name = await user.getName();
-      expect(name).to.equal(config.name);
+      expect(name).to.equal(undefined);
     });
   });
 });

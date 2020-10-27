@@ -1,41 +1,44 @@
 const rdf = require("rdflib");
 const ns = require("solid-namespace")(rdf);
 
-module.exports.getBio = function (graph) {
+module.exports.getStorage = function (graph) {
   if (graph) {
-    const bio = graph.any(rdf.sym(this.webId), ns.vcard("note"));
-    const bioValue = bio ? bio.value : undefined;
-    return bioValue;
+    const storage = graph.any(rdf.sym(this.webId), ns.space("storage"));
+    const storageValue = storage ? storage.value : "";
+    return storageValue;
   } else {
     const fetcher = this.fetcher;
     return fetcher
       .load(this.webId, { force: true, clearPreviousData: true })
       .then(() => {
-        const bio = this.graph.any(rdf.sym(this.webId), ns.vcard("note"));
-        const bioValue = bio ? bio.value : undefined;
-        return bioValue;
+        const storage = this.graph.any(
+          rdf.sym(this.webId),
+          ns.space("storage")
+        );
+        const storageValue = storage ? storage.value : undefined;
+        return storageValue;
       });
   }
 };
 
-module.exports.setBio = function (newBio) {
-  return this.getBio().then((bio) => {
+module.exports.setStorage = function (newStorage) {
+  return this.getStorage().then(() => {
     const del = [];
     const ins = [];
     const delSt = this.graph.statementsMatching(
       rdf.sym(this.webId),
-      ns.vcard("note")
+      ns.space("storage")
     );
     delSt.forEach((st) => {
       del.push(st);
     });
 
-    if (newBio) {
+    if (newStorage) {
       ins.push(
         rdf.st(
           rdf.sym(this.webId),
-          ns.vcard("note"),
-          rdf.lit(newBio),
+          ns.space("storage"),
+          rdf.sym(newStorage),
           rdf.sym(this.webId).doc()
         )
       );

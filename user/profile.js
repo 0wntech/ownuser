@@ -13,15 +13,18 @@ module.exports.getProfile = function (webId) {
     webId = this.webId;
   }
 
-  return fetcher.load(webId).then(() => {
+  return fetcher
+  .load(webId, { force: true, clearPreviousData: true })
+  .then(() => {
     const nameValue = this.getName(store);
     const emails = this.getEmails(store);
     const jobValue = this.getJob(store);
     const pictureValue = this.getPicture(store);
     const bioValue = this.getBio(store);
     const telephones = this.getTelephones(store);
+    const storage = this.getStorage(store);
     const contacts = this.getContacts(store);
-
+    
     return {
       webId: webId,
       name: nameValue,
@@ -31,17 +34,18 @@ module.exports.getProfile = function (webId) {
       bio: bioValue,
       telephones: telephones,
       contacts: contacts,
-    };
-  });
+        storage: storage,
+      };
+    });
 };
 
 module.exports.setProfile = function (profile) {
   return new Promise((resolve, reject) => {
     return this.getProfile().then(async (oldProfile) => {
-      let { name, job, picture, bio, emails, telephones } = profile;
+      let { name, job, picture, bio, emails, telephones, storage } = profile;
       const del = [];
       const ins = [];
-      if (name && name !== oldProfile.name) {
+      if (name !== oldProfile.name) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.foaf("name")
@@ -50,17 +54,18 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.foaf("name"),
-            rdf.lit(name),
-            rdf.sym(this.webId).doc()
-          )
-        );
+        if (name)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.foaf("name"),
+              rdf.lit(name),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
-      if (job && job !== oldProfile.job) {
+      if (job !== oldProfile.job) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("role")
@@ -69,17 +74,38 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("role"),
-            rdf.lit(job),
-            rdf.sym(this.webId).doc()
-          )
+        if (job)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("role"),
+              rdf.lit(job),
+              rdf.sym(this.webId).doc()
+            )
+          );
+      }
+      
+      if (storage !== oldProfile.storage) {
+        const delSt = this.graph.statementsMatching(
+          rdf.sym(this.webId),
+          ns.vcard("role")
         );
+        delSt.forEach((st) => {
+          del.push(st);
+        });
+
+        if (storage)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("role"),
+              rdf.sym(storage),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
-      if (picture && picture !== oldProfile.picture) {
+      if (picture !== oldProfile.picture) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("hasPhoto")
@@ -88,17 +114,18 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("hasPhoto"),
-            rdf.lit(picture),
-            rdf.sym(this.webId).doc()
-          )
-        );
+        if (picture)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("hasPhoto"),
+              rdf.lit(picture),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
-      if (bio && bio !== oldProfile.bio) {
+      if (bio !== oldProfile.bio) {
         const delSt = this.graph.statementsMatching(
           rdf.sym(this.webId),
           ns.vcard("note")
@@ -107,14 +134,15 @@ module.exports.setProfile = function (profile) {
           del.push(st);
         });
 
-        ins.push(
-          rdf.st(
-            rdf.sym(this.webId),
-            ns.vcard("note"),
-            rdf.lit(bio),
-            rdf.sym(this.webId).doc()
-          )
-        );
+        if (bio)
+          ins.push(
+            rdf.st(
+              rdf.sym(this.webId),
+              ns.vcard("note"),
+              rdf.lit(bio),
+              rdf.sym(this.webId).doc()
+            )
+          );
       }
 
       if (JSON.stringify(emails) !== JSON.stringify(oldProfile.emails)) {
@@ -147,7 +175,6 @@ module.exports.setProfile = function (profile) {
             noUpdate: true,
           }
         );
-        console.log(insertStatements, deleteStatements, telephones);
         if (insertStatements) insertStatements.forEach((st) => ins.push(st));
         if (deleteStatements) deleteStatements.forEach((st) => del.push(st));
       }

@@ -8,6 +8,7 @@ const config = require("./userConfig.json");
 const user = new User(config.webId);
 
 describe("Job", function() {
+  this.timeout(4000);
   user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
 
   before("Setting up auth...", async function() {
@@ -36,10 +37,10 @@ describe("Job", function() {
       expect(job).to.equal(newJob);
     });
 
-    it("shouldn't modify the job field", async function() {
+    it("should delete the job field", async function() {
       await user.setJob();
       let job = await user.getJob();
-      expect(job).to.equal(config.job);
+      expect(job).to.equal(undefined);
     });
   });
 });
