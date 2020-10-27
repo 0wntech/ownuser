@@ -20,6 +20,7 @@ module.exports.getProfile = function (webId) {
     const pictureValue = this.getPicture(store);
     const bioValue = this.getBio(store);
     const telephones = this.getTelephones(store);
+    const contacts = this.getContacts(store);
 
     return {
       webId: webId,
@@ -29,6 +30,7 @@ module.exports.getProfile = function (webId) {
       job: jobValue,
       bio: bioValue,
       telephones: telephones,
+      contacts: contacts,
     };
   });
 };

@@ -11,7 +11,8 @@ const originalProfile = {
   job: config.job,
   picture: config.picture,
   emails: config.emails,
-  telephones: config.telephones
+  telephones: config.telephones,
+  contacts: config.contacts
 };
 
 const user = new User(config.webId);
