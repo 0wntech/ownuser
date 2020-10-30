@@ -11,5 +11,5 @@
     "https://bejow.owntech.de/profile/card#me",
     "https://ludwig.owntech.de/profile/card#me"
   ],
-  "trustedApps": ["http://localhost:3001"]
+  "trustedApps": ["http://localhost:3001", "http://localhost:3000"]
 }

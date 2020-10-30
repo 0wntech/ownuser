@@ -11,11 +11,11 @@ module.exports.getContacts = function (store) {
       return contact.value;
     });
     return contacts;
-  }
+  };
 
   if (store) {
-    return contactQueryCallback(store)
-  }else {
+    return contactQueryCallback(store);
+  } else {
     const fetcher = this.fetcher;
     store = this.graph;
     return fetcher.load(webId).then(() => contactQueryCallback(store));
@@ -93,14 +93,18 @@ module.exports.getContactRecommendations = function () {
     let myFriends = [];
     runQuery(this.webId, query).then((results) => {
       const fofPromises = results.map((friend) => {
-        myFriends.push(friend.o);
+        myFriends.push(
+          friend.o.replace("solid.community", "solidcomunnity.net")
+        );
         return runQuery(friend.o, query);
       });
       Promise.all(fofPromises)
         .then((res) => {
           res.forEach((friends) => {
             friends.forEach((friend) => {
-              friendsOfFriends.push(friend.o);
+              friendsOfFriends.push(
+                friend.o.replace("solid.community", "solidcomunnity.net")
+              );
             });
           });
           return friendsOfFriends;
