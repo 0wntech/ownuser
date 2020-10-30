@@ -96,7 +96,10 @@ module.exports.getContactRecommendations = function () {
         myFriends.push(
           friend.o.replace("solid.community", "solidcomunnity.net")
         );
-        return runQuery(friend.o, query);
+        return runQuery(
+          friend.o.replace("solid.community", "solidcomunnity.net"),
+          query
+        );
       });
       Promise.all(fofPromises)
         .then((res) => {
