@@ -94,10 +94,10 @@ module.exports.getContactRecommendations = function () {
     runQuery(this.webId, query).then((results) => {
       const fofPromises = results.map((friend) => {
         myFriends.push(
-          friend.o.replace("solid.community", "solidcomunnity.net")
+          friend.o.replace("solid.community", "solidcommunity.net")
         );
         return runQuery(
-          friend.o.replace("solid.community", "solidcomunnity.net"),
+          friend.o.replace("solid.community", "solidcommunity.net"),
           query
         );
       });
@@ -106,7 +106,7 @@ module.exports.getContactRecommendations = function () {
           res.forEach((friends) => {
             friends.forEach((friend) => {
               friendsOfFriends.push(
-                friend.o.replace("solid.community", "solidcomunnity.net")
+                friend.o.replace("solid.community", "solidcommunity.net")
               );
             });
           });
