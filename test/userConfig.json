@@ -8,8 +8,15 @@
   "emails": ["lalasepp@gmail.com"],
   "telephones": ["03055493333"],
   "contacts": [
-    "https://bejow.owntech.de/profile/card#me",
-    "https://ludwig.owntech.de/profile/card#me"
+    "https://bejow.aws.owntech.de/profile/card#me",
+    "https://ludwigschubert.solidcommunity.net/profile/card#me"
   ],
-  "trustedApps": ["http://localhost:3001", "http://localhost:3000"]
+  "contactRecommendations": [
+    "https://a.inrupt.net/profile/card#me",
+    "https://d.inrupt.net/profile/card#me",
+    "https://ludwig.solidcommunity.net/profile/card#me",
+    "https://q.inrupt.net/profile/card#me",
+    "https://tim.solidcommunity.net/profile/card#me"
+  ],
+  "trustedApps": ["http://localhost:3001"]
 }

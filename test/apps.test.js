@@ -18,14 +18,12 @@ describe("Apps", function () {
   });
 
   afterEach("Resetting apps...", async function () {
-    console.log(config.trustedApps)
     await user.setApps(config.trustedApps);
   });
 
   describe("getApps()", function () {
     it("should fetch the trusted apps from the profile", async function () {
       const apps = await user.getApps();
-      console.log(apps)
       expect(apps).to.deep.equal(config.trustedApps);
     });
   });

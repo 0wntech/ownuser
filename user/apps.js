@@ -36,8 +36,8 @@ module.exports.setApps = async function (newApps) {
     const appsToDelete = currentApps.filter((app) => !newApps.includes(app));
     const appsToAdd = newApps.filter((app) => !currentApps.includes(app));
 
-    console.log("Adding permissions for: ", appsToAdd);
-    console.log("Removing permissions for: ", appsToDelete);
+    // console.log("Adding permissions for: ", appsToAdd);
+    // console.log("Removing permissions for: ", appsToDelete);
 
     appsToDelete.forEach((app) => {
       graph

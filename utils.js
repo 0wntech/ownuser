@@ -3,7 +3,6 @@ function sortMessages (ownMessages, friendMessages) {
     const messages = [];
     for (var message in ownMessages) {
       messages.push({ message: ownMessages[message], from: "me" });
-      //console.log(new Date(ownMessages[message].created))
     }
 
     for (message in friendMessages) {

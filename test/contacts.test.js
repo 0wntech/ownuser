@@ -13,7 +13,7 @@ describe("Contacts", function() {
 
   before("Setting up auth...", async function() {
     const credentials = await auth.getCredentials();
-    const session = await auth.login(credentials);
+    await auth.login(credentials);
     user.fetcher = new rdf.Fetcher(user.graph, { fetch: auth.fetch });
   });
 
@@ -25,6 +25,13 @@ describe("Contacts", function() {
     it("should fetch the right contacts from the profile", async function() {
       const contacts = await user.getContacts();
       expect(contacts).to.deep.equal(config.contacts);
+    });
+  });
+  
+  describe("getContactRecommendations()", function() {
+    it("should fetch the contact recommendations from the profile", async function() {
+      const contactRecommendations = await user.getContactRecommendations();
+      expect(contactRecommendations).to.deep.equal(config.contactRecommendations);
     });
   });
 
